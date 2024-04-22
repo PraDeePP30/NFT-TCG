@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGlobalContext } from './context'
-import {Nav, LoginRegisterModal} from './components'
+import {Nav} from './components'
 
 import styles from './styles'
 

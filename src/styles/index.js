@@ -26,6 +26,53 @@ const styles = {
     homeText: 'text-white text-xs text-center font-semibold mb-[32px] tracking-[2px] uppercase',
     homeSubText: 'text-white text-5xl text-center mb-[16px]',
     homeButton: 'text-white w-[170px] h-14 text-[1.75rem] mt-[16px] transition-[0.3s] border-2 border-solid border-white bg-slate-950 ml-0 rounded-md hover:text-black hover:bg-white',
+
+    //game mode
+    gameModeCard: 'w-[446px] h-[348px] flex p-[16px] shadow-[5px_5px_10px_0px_rgba(18,18,18,0.1)] items-center flex-col justify-center hover:shadow-[5px_5px_10px_0px_rgba(18,18,18,0.5)]',
+    gameModeText: 'text-4xl mb-[32px] font-bold',
+    gameModeImage: 'w-[415px] h-[250px] object-cover rounded-md',
+    
+    //game modes
+    // .game-modes-container {
+    //   @apply w-full flex overflow-auto min-h-screen items-start flex-col justify-start;
+    // }
+    // .game-modes-features {
+    //   @apply w-full h-[921px] flex pt-[var(--dl-space-space-threeunits)] pr-[var(--dl-space-space-threeunits)] pb-[var(--dl-space-space-threeunits)] pl-[var(--dl-space-space-threeunits)] max-w-full flex-col mt-[78px];
+    // }
+    // .game-modes-heading {
+    //   @apply text-5xl mb-[var(--dl-space-space-threeunits)];
+    // }
+    // .game-modes-container1 {
+    //   @apply flex-[0_0_auto] w-[1833px] h-[687px] grid gap-[var(--dl-space-space-twounits)] items-start grid-cols-[1fr_1fr_1fr_1fr];
+    // }
+
+    gameModesContainer: 'w-full flex overflow-hidden items-start flex-col justify-start',
+    gameModesFeatures: 'w-full h-[921px] flex p-[48px] max-w-full flex-col @media (max-width: 767px) {pl-[32px] pr-[32px]}',
+    gameModesHeading: 'text-5xl mb-[48px] font-bold',
+    gameModesContainer1: 'flex-[0_0_auto] w-[1400px] h-[687px] grid gap-[100px] items-start grid-cols-3',
+
+    // @media (max-width: 991px) {
+    //   .game-modes-heading {
+    //     @apply self-center;
+    //   }
+    //   .game-modes-container1 {
+    //     @apply grid-cols-[1fr_1fr];
+    //   }
+    // }
+    // @media (max-width: 767px) {
+    //   .game-modes-features {
+    //     @apply pl-[var(--dl-space-space-twounits)] pr-[var(--dl-space-space-twounits)];
+    //   }
+    // }
+    // @media (max-width: 479px) {
+    //   .game-modes-features {
+    //     @apply pt-[var(--dl-space-space-twounits)] pl-[var(--dl-space-space-unit)] pr-[var(--dl-space-space-unit)] pb-[var(--dl-space-space-twounits)];
+    //   }
+    //   .game-modes-container1 {
+    //     @apply gap-[var(--dl-space-space-halfunit)];
+    //   }
+    // }
+
     // hoc page
     hocContainer: 'min-h-screen flex xl:flex-row flex-col relative',
     hocContentBox: 'flex flex-1 justify-between bg-siteblack py-8 sm:px-12 px-8 flex-col',
@@ -39,7 +86,7 @@ const styles = {
     joinLoading: 'font-rajdhani font-normal text-xl text-white',
 
     // navbar
-    navContainer: 'w-full h-[78px] bg-slate-950 flex sticky items-center justify-end pt-[16px]',
+    navContainer: 'w-full h-[78px] bg-slate-950 flex sticky top-0 items-center justify-end pt-[16px]',
     navIcon: 'w-[78px] h-[78px] p-[20px] mr-[8px] fill-white hover:bg-white hover:fill-black active:fill-black active:bg-white',
 
     // battleground page
