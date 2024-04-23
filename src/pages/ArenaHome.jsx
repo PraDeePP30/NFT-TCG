@@ -9,7 +9,7 @@ import Card2 from '../assets/images/01.png'
 import Card3 from '../assets/images/02.png'
 import Card4 from '../assets/images/03.png'
 const ArenaHome = () => {
-  const { contract, gameData, battleName, setBattleName, setErrorMessage } = useGlobalContext();
+  const { contract, gameData, battleName, setBattleName, setErrorMessage, selectedCards, setSelectedCards } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
   
   const [displayBattlesPage, setDisplayBattlePage] = useState(false);
@@ -43,23 +43,23 @@ const ArenaHome = () => {
     // Add more image links as needed
   ];
 
-  const [selectedItems, setSelectedItems] = useState([]);
+  // const [selectedItems, setSelectedItems] = useState([]);
 
   const handleButtonClick = (index) => {
     // Check if the item is already selected
-    if (selectedItems.includes(index)) {
+    if (selectedCards.includes(index)) {
       // If selected, remove it from the list
-      setSelectedItems(selectedItems.filter((item) => item !== index));
+      setSelectedCards(selectedCards.filter((item) => item !== index));
     } else {
       // If not selected, add it to the list
-      setSelectedItems([...selectedItems, index]);
+      setSelectedCards([...selectedCards, index]);
     }
   };
 
   useEffect(() => {
     console.log(gameData);
-    console.log('Selected Items:', selectedItems);
-  }, [selectedItems]);
+    console.log('Selected Items:', selectedCards);
+  }, [selectedCards]);
   // useEffect(() => {
   //   const fetchBattles = async () => {
   //     const battles = await contract.getPendingBattles();
@@ -71,9 +71,9 @@ const ArenaHome = () => {
   return (
     <div className='flex flex-col h-screen'>
       <Nav></Nav>
-      <div className={styles.arenaHomeContainer}>
+      <div className={`${styles.arenaHomeContainer}`}>
         {displayBattlesPage ? 
-          <div className={styles.arenaHomeBattlesContainer}>
+          <div className={`${styles.arenaHomeBattlesContainer} `}>
             <p className={styles.text}> Available Battles </p>
             {gameData.pendingBattles.map((pendingBattle, index) => (
               <div key={index} className='flex flex-row m-2'>
@@ -113,7 +113,7 @@ const ArenaHome = () => {
               {imageLinks.map((link, index) => (
                 <div key={index} className={styles.cardContainer}>
                   <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${index + 1}`} />
-                  <button className={`${styles.btn} ${ selectedItems.includes(link) ? "bg-blue-700 text-white" : "text-white"}`} onClick={() => handleButtonClick(link)}>Select</button>
+                  <button className={`${styles.btn} ${ selectedCards.includes(link) ? "bg-blue-700 text-white" : "text-white"}`} onClick={() => handleButtonClick(link)}>Select</button>
                 </div>
               ))}
           </div>

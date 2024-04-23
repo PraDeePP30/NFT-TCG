@@ -20,6 +20,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [updateGameData, setUpdateGameData] = useState(0);
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [selectedCards, setSelectedCards] = useState([]);
 
   const player1Ref = useRef();
   const player2Ref = useRef();
@@ -175,6 +176,8 @@ export const GlobalContextProvider = ({ children }) => {
         setErrorMessage,
         modalIsOpen,
         setIsOpen,
+        selectedCards,
+        setSelectedCards,
       }}
     >
       {children}
