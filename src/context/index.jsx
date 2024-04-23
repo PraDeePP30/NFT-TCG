@@ -108,6 +108,30 @@ export const GlobalContextProvider = ({ children }) => {
   //   fetchGameData();
   // }, [contract, updateGameData]);
 
+
+    useEffect(() => {
+    const fetchGameData = async () => {
+      if (contract) {
+        // const fetchedBattles = await contract.getAllBattles();
+        const pendingBattles = ["Battle1","Battle2","Battle3","Battle4","Battle5"];
+        let activeBattle = null;
+
+        // fetchedBattles.forEach((battle) => {
+        //   if (battle.players.find((player) => player.toLowerCase() === walletAddress.toLowerCase())) {
+        //     if (battle.winner.startsWith('0x00')) {
+        //       activeBattle = battle;
+        //     }
+        //   }
+        // });
+
+        setGameData({ pendingBattles: pendingBattles, activeBattle });
+      }
+    };
+
+    fetchGameData();
+  }, [contract, updateGameData]);
+
+
   //* Handle alerts
   useEffect(() => {
     if (showAlert?.status) {

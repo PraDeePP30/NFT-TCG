@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Home.jsx'
 import { OnboardModal, LoginRegisterModal } from './components';
-import { GameModes } from './pages';
+import { GameModes, ArenaHome } from './pages';
 import './index.css'
 
 import { GlobalContextProvider } from './context/index.jsx';
@@ -16,7 +16,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/game-modes' element={<GameModes />} />
-          <Route path='/arena/:mode'></Route> 
+          <Route path='/arena/:mode' element={<ArenaHome />}></Route>
+          <Route path='/arena/:mode/battle/:battlename' ></Route>
         </Routes>
     </GlobalContextProvider>
   </BrowserRouter>

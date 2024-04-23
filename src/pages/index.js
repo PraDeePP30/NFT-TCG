@@ -1,2 +1,3 @@
 import GameModes from "./GameModes";
-export { GameModes };
+import ArenaHome from "./ArenaHome";
+export { GameModes, ArenaHome };

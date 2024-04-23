@@ -71,7 +71,7 @@ const OnboardModal = () => {
         return (
           <>
             <p className={styles.modalText}>
-              Oops, you don't have AVAX tokens in your account
+              Oops, you don't have enough ETH tokens in your account
             </p>
             <CustomButton
               title="Grab some test tokens"
