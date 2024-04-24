@@ -35,7 +35,7 @@ const OnboardModal = () => {
         return (
           <>
             <p className={styles.modalText}>
-              You don't have Core Wallet installed!
+              You don't have Meta Mask Wallet installed!
             </p>
             <CustomButton
               title="Download Core"
@@ -48,7 +48,7 @@ const OnboardModal = () => {
         return (
           <>
             <p className={styles.modalText}>
-              You haven't connected your account to Core Wallet!
+              You haven't connected your account to Meta Mask Wallet!
             </p>
             <CustomButton
               title="Connect Account"
@@ -61,7 +61,7 @@ const OnboardModal = () => {
         return (
           <>
             <p className={styles.modalText}>
-              You're on a different network. Switch to Fuji C-Chain.
+              You're on a different network. Switch to Test Network.
             </p>
             <CustomButton title="Switch" handleClick={SwitchNetwork} />
           </>

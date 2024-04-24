@@ -11,7 +11,7 @@ import Card4 from '../assets/images/03.png'
 const ArenaHome = () => {
   const { contract, gameData, battleName, setBattleName, setErrorMessage, selectedCards, setSelectedCards } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
-  
+
   const [displayBattlesPage, setDisplayBattlePage] = useState(false);
   const navigate = useNavigate();
 
@@ -113,7 +113,7 @@ const ArenaHome = () => {
               {imageLinks.map((link, index) => (
                 <div key={index} className={styles.cardContainer}>
                   <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${index + 1}`} />
-                  <button className={`${styles.btn} ${ selectedCards.includes(link) ? "bg-blue-700 text-white" : "text-white"}`} onClick={() => handleButtonClick(link)}>Select</button>
+                  <button className={`${styles.cardBtn} ${ selectedCards.includes(link) ? "bg-blue-700 text-white" : "bg-stone-950 text-white"}`} onClick={() => handleButtonClick(link)}>Select</button>
                 </div>
               ))}
           </div>

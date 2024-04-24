@@ -12,6 +12,7 @@ const Home = () => {
 
   const handleClick = async () => {
     try {
+      console.log(contract);
       const playerExists = await contract.isPlayer(walletAddress);
       if (!playerExists) {
         setIsOpen(true); // Open the modal

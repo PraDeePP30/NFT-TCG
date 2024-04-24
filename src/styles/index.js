@@ -34,6 +34,14 @@ const styles = {
     arenaHomeBattlesContainer: 'w-3/12 h-auto border-r-4 border-slate-950 flex items-center justify-center p-10 flex-col',
     arenaHomeCardsContainer: 'w-full h-full flex items-center justify-center p-4 grid grid-cols-3 place-content-around overflow-scroll',
 
+    //battle page
+    battlePageContainer: 'w-full h-auto flex pt-10 pl-10 pb-10 items-start justify-start flex-row',
+    battlePageContainerFixed: 'w-6/12 h-full flex pt-10 pl-10 items-start justify-start flex-row',
+    battleCardContainer: 'w-[250px] h-[300px] flex flex-col items-center justify-center mr-[-50px] cursor-pointer transition-[0.3s] ease-in-out glass-morphism relative hover:z-[9999] hover:scale-[1.1]',
+    battleCardContainerFixed: 'w-[250px] h-[300px] flex flex-col items-center rounded-md justify-center mr-[-50px] cursor-pointer transition-[0.3s] ease-in-out glass-morphism relative',
+    clicked:'z-[9999] scale-[1.1]',
+    selectDropdown: 'w-[170px] h-[40px] bg-white text-black rounded-md outline-slate-300 border-[1px] border-slate-500 hover:border-2 hover:border-slate-950 focus:border-2 focus:border-blue-300 text-center cursor-pointer',
+    selectOption: 'p-[10px] text-sm',
     // hoc page
     hocContainer: 'min-h-screen flex xl:flex-row flex-col relative',
     hocContentBox: 'flex flex-1 justify-between bg-siteblack py-8 sm:px-12 px-8 flex-col',
@@ -77,6 +85,7 @@ const styles = {
     cardPoint: 'font-rajdhani text-[20px] font-bold',
     cardTextContainer: 'absolute w-full bottom-[13.5%] left-3',
     cardText: 'font-rajdhani text-[26px] font-bold text-white',
+    cardBtn: 'px-4 py-2 rounded-lg w-fit text-white font-bold border-2 hover:bg-white hover:border-slate-950 hover:text-slate-950 transition-all ease-in duration-300',
   
     // custom button component
     btn: 'px-4 py-2 rounded-lg bg-stone-950 w-fit text-white font-bold border-2 hover:bg-white hover:border-slate-950 hover:text-slate-950 transition-all ease-in duration-300',
