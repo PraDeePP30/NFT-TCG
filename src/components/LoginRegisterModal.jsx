@@ -2,31 +2,34 @@ import { useState, input } from "react";
 import Modal from "react-modal";
 import styles from "../styles";
 import { useGlobalContext } from "../context";
-
+import {Alert} from './'
 import React from 'react'
 
 const LoginRegisterModal = () => {
-  const {contract, walletAddress, modalIsOpen, setIsOpen, setShowAlert, setErrorMessage} = useGlobalContext();
+  const {contract, walletAddress, modalIsOpen, setIsOpen, showAlert, setShowAlert, setErrorMessage} = useGlobalContext();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   console.log(walletAddress);
   const handleClick = async () => {
+    try {
     if(name && email) {
-    await contract.registerPlayer(walletAddress, name, email, { gasLimit: 500000 });
+      await contract.registerPlayer(walletAddress, name, email, { gasLimit: 500000 });
         setShowAlert({
           status: true,
           type: 'info',
           message: `${name} is being summoned!`,
         });
-        setTimeout(() => {
-          setIsOpen(false); // Close the modal after 8000 milliseconds
-          navigate('/game-modes');
-        }, 5000);
       }
+
     else{
       setErrorMessage("Please fill all the fields");
     }
-    // setIsOpen(false);
+  }
+  catch (error) {
+    setErrorMessage(error);
+  }
+
+    setIsOpen(false);
   };
   return (
     <Modal
@@ -35,6 +38,7 @@ const LoginRegisterModal = () => {
       overlayClassName="Overlay"
     >
     <div className="flex-col bg-slate-950 w-80 h-80 p-10 justify-center rounded-xl">
+    {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
       <div>
         <input className={styles.input} 
         type="text" 
@@ -52,7 +56,7 @@ const LoginRegisterModal = () => {
       }}
       placeholder="Email" required/>
       </div>
-      <div>
+      <div className="flex items-center justify-center">
       <button className={styles.button} onClick={handleClick} >Register</button>
       </div>
     </div>

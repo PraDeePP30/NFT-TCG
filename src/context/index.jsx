@@ -21,7 +21,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [updateGameData, setUpdateGameData] = useState(0);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
-
+  const [accountBalance, setAccountBalance] = useState(0);
   const player1Ref = useRef();
   const player2Ref = useRef();
 
@@ -70,6 +70,16 @@ export const GlobalContextProvider = ({ children }) => {
 
     setSmartContractAndProvider();
   }, []);
+
+  useEffect(() => {
+    const fetchAccountBalance = async () => {
+      if (provider) {
+        const balance = await provider.getBalance(walletAddress);
+        setAccountBalance(ethers.utils.formatEther(balance));
+      }
+    };
+    fetchAccountBalance();
+  },[]);
 
   //* Activate event listeners for the smart contract
   useEffect(() => {
@@ -148,7 +158,7 @@ export const GlobalContextProvider = ({ children }) => {
   //* Handle error messages
   useEffect(() => {
     if (errorMessage) {
-      const parsedErrorMessage = errorMessage?.reason?.slice('execution reverted: '.length).slice(0, -1);
+      const parsedErrorMessage = errorMessage?.data?.message?.slice('VM Exception while processing transaction: revert '.length).slice(0, -1);
 
       if (parsedErrorMessage) {
         setShowAlert({
@@ -179,6 +189,7 @@ export const GlobalContextProvider = ({ children }) => {
         setIsOpen,
         selectedCards,
         setSelectedCards,
+        accountBalance,
       }}
     >
       {children}

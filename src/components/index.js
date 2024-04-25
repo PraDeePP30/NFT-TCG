@@ -4,6 +4,7 @@ import CustomInput from './CustomInput';
 import LoginRegisterModal from './LoginRegisterModal'
 import GameMode from './GameMode';
 import Nav from './Nav';
+import Alert from './Alert';
 export {
   OnboardModal,
   CustomButton,
@@ -11,4 +12,5 @@ export {
   Nav,
   LoginRegisterModal,
   GameMode,
+  Alert,
 };

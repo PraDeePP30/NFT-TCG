@@ -3,7 +3,7 @@ const styles = {
     headText: 'font-rajdhani font-bold text-white sm:text-6xl text-4xl',
     normalText: 'font-rajdhani font-normal text-[24px] text-siteWhite',
     footerText: 'font-rajdhani font-medium text-base text-white',
-    infoText: 'font-rajdhani font-medium mt-4 text-lg text-siteViolet cursor-pointer',
+    infoText: 'font-rajdhani font-medium mt-4 text-lg text-slate-950 cursor-pointer',
 
     // input: 'bg-siteDimBlack text-white outline-none focus:outline-siteViolet p-4 rounded-md sm:max-w-[50%] max-w-full',
     input: 'text-slate-950 outline-slate-950 p-4 m-4 rounded-md border-[1px] border-slate-950',

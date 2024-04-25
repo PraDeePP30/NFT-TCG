@@ -40,6 +40,18 @@ export const createEventListeners = ({ navigate, contract, provider, walletAddre
     }
   });
 
+const cardMintedEventFilter = contract.filters.NFTMinted();
+AddNewEvent(cardMintedEventFilter, provider, ({ args }) => {
+  console.log('New card Minted!', args);
+  if (walletAddress === args.owner) {
+    setShowAlert({
+      status: true,
+      type: 'success',
+      message: 'Card has been successfully Minted',
+    });
+  }
+});
+
   
 
 //   const NewBattleEventFilter = contract.filters.NewBattle();

@@ -2,17 +2,17 @@ import { useState, useEffect } from 'react'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGlobalContext } from './context'
-import {Nav} from './components'
+import {Nav, Alert} from './components'
 
 import styles from './styles'
 
 const Home = () => {
-  const { contract, walletAddress, gameData, setShowAlert, modalIsOpen, setIsOpen, setErrorMessage } = useGlobalContext();
+  const { contract, walletAddress, gameData, showAlert, modalIsOpen, setIsOpen, setErrorMessage } = useGlobalContext();
   const navigate = useNavigate();
 
   const handleClick = async () => {
     try {
-      console.log(contract);
+      // console.log(contract);
       const playerExists = await contract.isPlayer(walletAddress);
       if (!playerExists) {
         setIsOpen(true); // Open the modal
@@ -56,10 +56,11 @@ const Home = () => {
 
   return (
     <div className='w-full h-full flex-col items-center justify-start'>
+      {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
       <Nav></Nav>
       <div className={styles.homeBanner}>
         <span className={styles.homeText}>Cards Unleashed, Power Up Your Play.</span>
-        <h1 className={styles.homeSubText}>Embrace the Challenge: Where Strategy Meets Destiny.</h1>
+        <h1 className={styles.homeSubText}>Embrace the Change: Where Strategy Meets Destiny.</h1>
         <button className={styles.homeButton} onClick={handleClick} >Play</button>
       </div>
     </div>
