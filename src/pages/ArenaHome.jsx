@@ -11,13 +11,44 @@ import { ethers } from 'ethers';
 // import Card2 from '../assets/images/01.png'
 // import Card3 from '../assets/images/02.png'
 // import Card4 from '../assets/images/03.png'
+
+const contactFlask = async () => {
+  try {
+    // Define the URL of your Flask server endpoint
+    const url = 'http://localhost:5000/your-endpoint'; // Replace with your actual Flask server endpoint
+
+    // Make a GET request to the Flask server
+    const response = await fetch(url);
+
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+
+    // Parse the response body as JSON
+    const data = await response.json();
+
+    // Log or process the received data
+    console.log('Data received from Flask server:', data);
+
+    // Return the received data (if needed)
+    return data;
+  } catch (error) {
+    // Handle any errors that occurred during the fetch operation
+    console.error('Error contacting Flask server:', error);
+    throw error; // Optional: rethrow the error to handle it outside this function
+  }
+};
+
+
+
 const ArenaHome = () => {
-  const { contract, gameData, accountBalance, battleName, setBattleName, setShowAlert, setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress } = useGlobalContext();
+  const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, setShowAlert, setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress, cardMinted } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
-  const [availableCards, setAvailableCards] = useState([]);
+  // const [availableCards, setAvailableCards] = useState([]);
   const [noCards, setNoCards] = useState(true);
   // const [reload, setReload] = useState(true);
-  const [cardMinted, setCardMinted] = useState(false);
+  // const [cardMinted, setCardMinted] = useState(false);
   const [displayBattlesPage, setDisplayBattlePage] = useState(false);
   const navigate = useNavigate();
 
@@ -34,9 +65,13 @@ const ArenaHome = () => {
 
   useEffect(() => {
     // console.log('Available jbbjhb:', availableCards);/
-    console.log("Hiiii");
+    // console.log("Hiiii");
+    // setTimeout(() => {
+    console.log('Card Minted',cardMinted);
     fetchAvailableCards();
-  }, []);
+    // }, 3000);
+    
+  }, [contract, cardMinted]);
 
 
   useEffect(() => {
@@ -50,9 +85,11 @@ const ArenaHome = () => {
 
   const fetchAvailableCards = async () => {
     try{
+        console.log("Fetch Cards");
+        // console.log(contract);
         if(contract){
         let cards = await contract.getAvailableCards(walletAddress);
-        console.log('cards: ',cards);
+        console.log('cards: ',cards.length);
         const temp = [];
         cards.forEach(async (item, index) => {
           // console.log(`Item at index ${index}: ${item}`);
@@ -71,7 +108,7 @@ const ArenaHome = () => {
             // }
             // setAvailableCards([...availableCards, data.image_link]);
             temp.push(data.image_link);
-            console.log('Temp:',temp);
+            // console.log('Temp:',temp);
           } catch (error) {
             console.error('Error fetching data:', error);
           }
@@ -110,30 +147,49 @@ const ArenaHome = () => {
 
   
   // Usage example
-  const fetchData = () => {
-      mintCardLink = 'https://bafybeige2was3qob2esyv4kbtxa5obijpv4vhkhmw2clcypmbhnxzpko5i.ipfs.w3s.link/1.json';
-      console.log('Mint Card Link:',mintCardLink);
+  const fetchData = async () => {
+    
+      // mintCardLink = 'https://bafybeige2was3qob2esyv4kbtxa5obijpv4vhkhmw2clcypmbhnxzpko5i.ipfs.w3s.link/1.json';
+      // console.log('Mint Card Link:',mintCardLink);
+      // console.log('CArdMintd',cardMinted);
       
     try{
-      // Call the async function
-        console.log('Mint Card Link:',mintCardLink);
-        mintCard();
+        let mintCardLink = null;
+        let isDataReceived = false;
+        // Call the contactFlask function to fetch data from the Flask server
+        mintCardLink = await contactFlask();
+
+        // Start polling loop
+        while (!isDataReceived) {
+          // Check if data is received
+          if (mintCardLink !== null) {
+            // Data received, set flag to true to exit loop
+            isDataReceived = true;
+          }
+        }
+        // Call the async function
+        // console.log('Mint Card Link:',mintCardLink);
+        mintCard(mintCardLink);
         setTimeout(() => {
-          fetchAvailableCards();
-        }, 32000);
+          setShowAlert({
+            status: true,
+            type: 'success',
+            message: 'Card Minted Successfully',
+          })
+        }, 15000);
     }
     catch(error){
-      setErrorMessage(error);
-      // console.log(error);
+      // setErrorMessage(error);
+      console.log(error);
     }
     
   };
 
-  const mintCard = async () => {
+  const mintCard = async (mintCardLink) => {
     console.log('Minting card:', mintCardLink);
     await contract.payToMint(
       walletAddress, mintCardLink, { value: ethers.utils.parseEther('0.05') }
-    );
+    )
     // console.log('Card minted');
   };
   
@@ -150,8 +206,8 @@ const ArenaHome = () => {
   };
 
   useEffect(() => {
-    console.log(gameData);
-    console.log('Selected Items:', selectedCards);
+    // console.log(gameData);
+    // console.log('Selected Items:', selectedCards);
     console.log('Available Cards:', availableCards);
   }, [selectedCards]);
   // useEffect(() => {

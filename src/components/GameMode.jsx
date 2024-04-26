@@ -5,15 +5,17 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const GameMode = (props) => {
-  const { title, imageSrc, imageAlt, value } = props;
+  const { title, imageSrc, imageAlt, value, available } = props;
   const navigate = useNavigate();
   const [mode, setMode] = useState(value);
 
   const handleClick = () => {
-    navigate(`/arena/${mode}`);
+    if(available){
+      navigate(`/arena/${mode}`);
+    }
 }
   return (
-    <div className={styles.gameModeCard} onClick={handleClick}>
+    <div className={`${ available? styles.gameModeCard : styles.gameModeCardNA}`} onClick={handleClick}>
       <h2 className={styles.gameModeText}>{title}</h2>
       <img
         alt={imageAlt}

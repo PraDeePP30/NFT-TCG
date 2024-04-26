@@ -17,10 +17,12 @@ export const GlobalContextProvider = ({ children }) => {
   const [gameData, setGameData] = useState({ players: [], pendingBattles: [], activeBattle: null });
   const [showAlert, setShowAlert] = useState({ status: false, type: 'info', message: '' });
   const [battleName, setBattleName] = useState('');
+  const [cardMinted, setCardMinted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [updateGameData, setUpdateGameData] = useState(0);
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
+  const [availableCards, setAvailableCards] = useState([]);
   const [accountBalance, setAccountBalance] = useState(0);
   const player1Ref = useRef();
   const player2Ref = useRef();
@@ -93,6 +95,8 @@ export const GlobalContextProvider = ({ children }) => {
         player1Ref,
         player2Ref,
         setUpdateGameData,
+        setCardMinted,
+        cardMinted,
       });
     }
   }, [step]);
@@ -185,10 +189,13 @@ export const GlobalContextProvider = ({ children }) => {
         setBattleName,
         errorMessage,
         setErrorMessage,
-        modalIsOpen,
+        isOpen,
         setIsOpen,
+        availableCards,
+        setAvailableCards,
         selectedCards,
         setSelectedCards,
+        cardMinted,
         accountBalance,
       }}
     >

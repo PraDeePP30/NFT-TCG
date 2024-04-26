@@ -7,14 +7,14 @@ import { useGlobalContext } from '../context';
 import { GetParams, SwitchNetwork } from '../utils/onboard.js';
 
 const OnboardModal = () => {
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const { updateCurrentWalletAddress } = useGlobalContext();
   const [step, setStep] = useState(-1);
 
   async function resetParams() {
     const currentStep = await GetParams();
     setStep(currentStep.step);
-    setIsOpen(currentStep.step !== -1);
+    setModalIsOpen(currentStep.step !== -1);
   }
 
   useEffect(() => {
@@ -30,6 +30,7 @@ const OnboardModal = () => {
   }, []);
 
   const generateStep = (st) => {
+    console.log("onboard");
     switch (st) {
       case 0:
         return (

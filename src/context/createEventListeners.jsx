@@ -26,7 +26,7 @@ const getCoords = (cardRef) => {
 
 const emptyAccount = '0x0000000000000000000000000000000000000000';
 
-export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert, player1Ref, player2Ref, setUpdateGameData }) => {
+export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert, player1Ref, player2Ref, setUpdateGameData, setCardMinted, cardMinted }) => {
   const NewPlayerEventFilter = contract.filters.NewPlayer();
   AddNewEvent(NewPlayerEventFilter, provider, ({ args }) => {
     console.log('New player created!', args);
@@ -43,13 +43,23 @@ export const createEventListeners = ({ navigate, contract, provider, walletAddre
 const cardMintedEventFilter = contract.filters.NFTMinted();
 AddNewEvent(cardMintedEventFilter, provider, ({ args }) => {
   console.log('New card Minted!', args);
-  if (walletAddress === args.owner) {
-    setShowAlert({
-      status: true,
-      type: 'success',
-      message: 'Card has been successfully Minted',
+  // console.log('initial:',cardMinted);
+  // var negated = !cardMinted;
+  // console.log('negated:',negated)
+  // console.log('wallet addr',walletAddress);
+  // console.log('args: ',args.recipient);
+  if (walletAddress.toLowerCase() === args.recipient.toLowerCase()) {
+    // console.log("ffefweff");
+    setCardMinted(prevCardMinted => {
+      // You can access the previous state (prevCardMinted) here
+      console.log('Previous state:', prevCardMinted);
+    
+      // Toggle the value based on the previous state
+      return !prevCardMinted;
     });
+    // setCardMinted(negated);
   }
+  // console.log('later',cardMinted);
 });
 
   

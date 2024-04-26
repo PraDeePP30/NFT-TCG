@@ -21,6 +21,7 @@ const styles = {
 
     //game mode
     gameModeCard: 'w-auto h-auto flex p-[16px] shadow-[5px_5px_10px_0px_rgba(18,18,18,0.1)] items-center flex-col justify-center hover:shadow-[5px_5px_10px_0px_rgba(18,18,18,0.5)]',
+    gameModeCardNA: 'w-auto h-auto flex p-[16px] shadow-[5px_5px_10px_0px_rgba(18,18,18,0.1)] bg-neutral-400 items-center flex-col justify-center',
     gameModeText: 'text-4xl mb-[32px] font-bold',
     gameModeImage: 'w-[415px] h-[250px] object-cover rounded-md',
 

@@ -7,7 +7,7 @@ import {Nav, Alert} from './components'
 import styles from './styles'
 
 const Home = () => {
-  const { contract, walletAddress, gameData, showAlert, modalIsOpen, setIsOpen, setErrorMessage } = useGlobalContext();
+  const { contract, walletAddress, gameData, showAlert, setIsOpen, setErrorMessage } = useGlobalContext();
   const navigate = useNavigate();
 
   const handleClick = async () => {
