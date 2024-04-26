@@ -31,7 +31,7 @@ export const createEventListeners = ({ navigate, contract, provider, walletAddre
   AddNewEvent(NewPlayerEventFilter, provider, ({ args }) => {
     console.log('New player created!', args);
 
-    if (walletAddress === args.owner) {
+    if (walletAddress.toLowerCase() === args.owner.toLowerCase()) {
       setShowAlert({
         status: true,
         type: 'success',

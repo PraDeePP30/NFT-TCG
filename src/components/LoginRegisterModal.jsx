@@ -10,7 +10,7 @@ const LoginRegisterModal = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   console.log(walletAddress);
-  
+
   const handleClose = () => {
     setIsOpen(false);
   }
@@ -32,7 +32,7 @@ const LoginRegisterModal = () => {
   catch (error) {
     setErrorMessage(error);
   }
-    handleClose;
+    setIsOpen(false);
   };
 
   return (
