@@ -10,6 +10,11 @@ const LoginRegisterModal = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   console.log(walletAddress);
+  
+  const handleClose = () => {
+    setIsOpen(false);
+  }
+
   const handleClick = async () => {
     try {
     if(name && email) {
@@ -20,7 +25,6 @@ const LoginRegisterModal = () => {
           message: `${name} is being summoned!`,
         });
       }
-
     else{
       setErrorMessage("Please fill all the fields");
     }
@@ -28,19 +32,23 @@ const LoginRegisterModal = () => {
   catch (error) {
     setErrorMessage(error);
   }
-
-    setIsOpen(false);
+    handleClose;
   };
+
   return (
     <Modal
       isOpen={isOpen}
       className={`absolute inset-0 ${styles.flexCenter} flex-col ${styles.glassEffect}`}
       overlayClassName="Overlay"
     >
-      <div>
-        {/* <svg viewBox="0 0">
-          <path d="M 10,30 L 90,70 M 10,70 L 90,30"></path>
-        </svg> */}
+      <div className="flex flex-col items-end">
+        <div className="stroke-[2px] hover:stroke-[3.5px]" onClick={handleClose}>
+          <svg width="30" height="50" viewBox="70 10 20 60">
+            <path d="M 70,30 L 90,50 M 70,50 L 90,30" 
+            className="stroke-white" />
+          </svg>
+        </div>
+        
         <div className="flex-col bg-slate-950 w-80 h-80 p-10 justify-center rounded-xl">
         {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
           <div>
