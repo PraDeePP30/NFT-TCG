@@ -22,8 +22,8 @@ export const GlobalContextProvider = ({ children }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [updateGameData, setUpdateGameData] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCards, setSelectedCards] = useState([]);
-  const [availableCards, setAvailableCards] = useState([]);
+  const [selectedCards, setSelectedCards] = useState({});
+  const [availableCards, setAvailableCards] = useState({});
   const [accountBalance, setAccountBalance] = useState(0);
   const player1Ref = useRef();
   const player2Ref = useRef();
@@ -50,6 +50,10 @@ export const GlobalContextProvider = ({ children }) => {
       if(isCards){
         console.log('LocalStorage: ',isCards);
         setSelectedCards(isCards);
+      }
+      else{
+        console.log('LocalStorage: ',isCards);
+        setSelectedCards({});
       }
   }, [])
 

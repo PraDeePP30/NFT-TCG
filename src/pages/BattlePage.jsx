@@ -5,9 +5,37 @@ import { useGlobalContext } from '../context'
 import Alert from '../components/Alert'
 import cardBack from '../assets/images/cardBack.png'
 
+const contactFlask = async () => {
+    try {
+      // Define the URL of your Flask server endpoint
+      const url = 'http://127.0.0.1:5000/toss'; // Replace with your actual Flask server endpoint
+  
+      // Make a GET request to the Flask server
+      const response = await fetch(url);
+      console.log('Flask Response: ',response);
+      // Check if the request was successful
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+  
+      // Parse the response body as JSON
+      const data = await response.json();
+  
+      // Log or process the received data
+      console.log('Data received from Flask server:', data);
+  
+      // Return the received data (if needed)
+      return data;
+    } catch (error) {
+      // Handle any errors that occurred during the fetch operation
+      console.error('Error contacting Flask server:', error);
+      throw error; // Optional: rethrow the error to handle it outside this function
+    }
+  };
+
 const BattlePage = () => {
     const { selectedCards, showAlert, setShowAlert } = useGlobalContext();
-    console.log(selectedCards);
+    console.log('SelectedCards:::',selectedCards);
     const { battlename } = useParams();
     const [clickedIndex, setClickedIndex] = useState(null);
     const [toss, setToss] = useState(true);
@@ -23,15 +51,7 @@ const BattlePage = () => {
     }   
 
     const handleToss = async () => {
-        if(number === ''){
-            setShowAlert({
-                status: true,
-                type: 'failure',
-                message: 'Please enter a number',
-              });
-            // return;
-        };
-        // await contract.toss(number);
+        
         setToss(false);
     }
 
@@ -43,28 +63,28 @@ const BattlePage = () => {
         <div className='flex flex-row h-full w-full'>
             <div className='flex flex-col w-6/12 items-center'>
                 <div className={styles.battlePageContainer}>
-                    {selectedCards.map((link, index) => (
-                        <div 
-                        key={index} 
+                {Object.entries(selectedCards).map(([key, link], index) => (
+                    <div 
+                        key={key} 
                         className={`${styles.battleCardContainer} ${index === clickedIndex ? styles.clicked : ''}`} 
-                        style={{ zIndex: index === clickedIndex ? selectedCards.length + 1 : selectedCards.length - index }}
+                        style={{ zIndex: index === clickedIndex ? Object.keys(selectedCards).length + 1 : Object.keys(selectedCards).length - index }}
                         onClick={() => handleContainerClick(index)}
-                        >
+                    >
                         <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${index + 1}`} />
-                        </div>
+                    </div>
                     ))}
                 </div>
                 {
                     toss?
                     <div className='flex flex-col'>
-                        <p className='font-bold text-xl'>Choose a number between 1-100</p>
+                        <p className='font-bold text-xl'>Click Toss!</p>
                         <div className='flex flex-row items-center justify-center'>
-                            <input type="text" placeholder='Number' className='text-slate-950 outline-slate-950 w-24 h-10 p-4 m-4 rounded-md border-[1px] border-slate-950'
+                            {/* <input type="text" placeholder='Number' className='text-slate-950 outline-slate-950 w-24 h-10 p-4 m-4 rounded-md border-[1px] border-slate-950'
                                 onChange={(e) => {
                                     if (e.target.value === '' || regex.test(e.target.value)) handleValueChange(e.target.value);
-                                  }}/>
-                            <button className='text-white w-[70px] text-center h-10 m-4 transition-[0.3s] border-2 border-solid border-white bg-slate-950 rounded-md hover:text-black hover:bg-white'
-                                onClick={()=>handleToss()}>Enter</button>
+                                  }}/> */}
+                            <button className='text-white w-[70px] text-center h-10 m-4 transition-[0.3s] border-2 border-solid border-white bg-slate-950 rounded-md hover:text-black hover:border-slate-950 hover:bg-white'
+                                onClick={()=>handleToss()}>Toss</button>
                         </div>
                     </div>
                     :
@@ -84,11 +104,11 @@ const BattlePage = () => {
             
 
             <div className={styles.battlePageContainerFixed}>
-                {selectedCards.map((link, index) => (
-                    <div key={index} className={`${styles.battleCardContainerFixed} `}>
-                    <img src={cardBack} className={`w-full h-full object-contain mb-2`} alt={`Image ${index + 1}`} />
-                    {/* <button className={`${styles.btn} ${ selectedCards.includes(link) ? "bg-blue-700 text-white" : "text-white"}`} onClick={() => handleButtonClick(link)}>Select</button> */}
-                    </div>
+            {Object.entries(selectedCards).map(([key, link]) => (
+                <div key={key} className={`${styles.battleCardContainerFixed} `}>
+                    <img src={cardBack} className={`w-full h-full object-contain mb-2`} alt={`Image ${key}`} />
+                    {/* <button className={`${styles.btn} ${ selectedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "text-white"}`} onClick={() => handleButtonClick(key)}>Select</button> */}
+                </div>
                 ))}
             </div>
         </div>

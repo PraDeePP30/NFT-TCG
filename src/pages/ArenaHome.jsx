@@ -68,14 +68,14 @@ const ArenaHome = () => {
     // console.log('Available jbbjhb:', availableCards);/
     // console.log("Hiiii");
     // setTimeout(() => {
-    localStorage.setItem('cards', [JSON.stringify(selectedCards)]);
+    localStorage.setItem('cards', JSON.stringify(selectedCards));
     console.log('Card Minted',cardMinted);
     fetchAvailableCards();
     // }, 3000);
   }, [contract, cardMinted]);
 
   useEffect(() => {
-    if (availableCards.length < 1) {
+    if (Object.keys(availableCards).length < 1) {
       setNoCards(true);
     }
     else{
@@ -90,7 +90,7 @@ const ArenaHome = () => {
         if(contract){
         let cards = await contract.getAvailableCards(walletAddress);
         console.log('cards: ',cards.length);
-        const temp = [];
+        const temp = {};
         cards.forEach(async (item, index) => {
           // console.log(`Item at index ${index}: ${item}`);
           try {
@@ -107,7 +107,7 @@ const ArenaHome = () => {
             //   setAvailableCards([...availableCards, data.image_link]);
             // }
             // setAvailableCards([...availableCards, data.image_link]);
-            temp.push(data.image_link);
+            temp[item] = data.image_link;
             // console.log('Temp:',temp);
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -141,7 +141,7 @@ const ArenaHome = () => {
       return;
     }
     console.log(battleName)
-    if(selectedCards.length !== 3){
+    if(Object.keys(selectedCards).length !== 3){
       setShowAlert({
         status: true,
         type: 'failure',
@@ -153,7 +153,7 @@ const ArenaHome = () => {
       await contract.createBattle(walletAddress, mode, battleName);
       // setWaitBattle(true);
       setTimeout(() => {
-        localStorage.setItem('cards', [JSON.stringify(selectedCards)]);
+        localStorage.setItem('cards', JSON.stringify(selectedCards));
         navigate(`/arena/${mode}/battle/${battleName}`);
       }, 25000)
     } catch (error) {
@@ -162,7 +162,7 @@ const ArenaHome = () => {
   };
 
   const handleJoinBattle = (pendingBattle) =>{
-    if(selectedCards.length !== 3){
+    if(Object.keys(selectedCards).length !== 3){
       setShowAlert({
         status: true,
         type: 'failure',
@@ -170,7 +170,7 @@ const ArenaHome = () => {
       });
       return;
     }
-    localStorage.setItem('cards', [JSON.stringify(selectedCards)]);
+    localStorage.setItem('cards', JSON.stringify(selectedCards));
 
     // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
     setTimeout(() => {
@@ -229,19 +229,33 @@ const ArenaHome = () => {
   
   // const [selectedItems, setSelectedItems] = useState([]);
 
-  const handleButtonClick = (index) => {
-    if (selectedCards.includes(index)) {
-      // If selected, remove it from the list
-      setSelectedCards(selectedCards.filter((item) => item !== index));
+  const handleButtonClick = (key, link) => {
+    // Check if the key exists in the selectedCards dictionary
+    if (selectedCards.hasOwnProperty(key)) {
+        // If selected, remove it from the dictionary
+        const updatedSelectedCards = { ...selectedCards }; // Create a copy of the dictionary
+        delete updatedSelectedCards[key]; // Remove the key from the copy
+        setSelectedCards(updatedSelectedCards); // Update the state with the modified dictionary
     } else {
-      // If not selected, add it to the list
-      setSelectedCards([...selectedCards, index]);
+        // If not selected, add it to the dictionary
+        setSelectedCards({ ...selectedCards, [key]: link }); // Add the key to the dictionary with a truthy value
     }
-  };
+};
+
+  const handleCardsConfirmation = () =>{
+    Object.keys(selectedCards).forEach(async (key) => {
+      try {
+          await contract.transferCardToContract(key); // Assuming `receiverAddress` is defined elsewhere
+          console.log(`Transferred card with key ${key} successfully.`);
+      } catch (error) {
+          console.error(`Error transferring card with key ${key}:`, error);
+      }
+  });  
+  }
 
   useEffect(() => {
     // console.log(gameData);
-    // console.log('Selected Items:', selectedCards);
+    console.log('Selected Items:', selectedCards);
     console.log('Available Cards:', availableCards);
   }, [selectedCards]);
   // useEffect(() => {
@@ -305,7 +319,7 @@ const ArenaHome = () => {
       </div>
       }
         {
-          availableCards.length < 1 ?
+          Object.keys(availableCards).length < 1 ?
           <div className='w-9/12 h-full flex flex-col items-center justify-center'>
             <p className={`${styles.text} mt-60`}>You dont have any cards...</p>
             <button className={`${styles.buttonLight} mb-72 hover:border-2 hover:border-slate-950`}
@@ -313,21 +327,32 @@ const ArenaHome = () => {
               > Mint </button>
           </div>
            :
-          <div className='w-9/12 h-full items-center flex flex-col'> 
+          <div className='w-9/12 h-full items-center flex flex-col overflow:scroll'> 
             <p className={styles.text}> Available Cards </p>
-            {   availableCards.length < 5 &&
+            {   Object.keys(availableCards).length < 5 &&
                 <button className={`text-black w-20 h-10 text-4 transition-[0.1s] border-2 border-solid border-black bg-white rounded-md hover:text-white hover:bg-slate-950 hover:border-2 hover:border-slate-950`}
                 onClick={fetchData}
                 > Mint </button>
             }
             
             <div className={styles.arenaHomeCardsContainer}>
-                {availableCards.map((link, index) => (
-                  <div key={index} className={styles.cardContainer}>
-                    <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${index + 1}`} />
-                    <button className={`${styles.cardBtn} ${ selectedCards.includes(link) ? "bg-blue-700 text-white" : "bg-stone-950 text-white"}`} onClick={() => handleButtonClick(link)}>Select</button>
-                  </div>
-                ))}
+            {Object.entries(availableCards).map(([key, link]) => (
+              <div key={key} className={styles.cardContainer}>
+                <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${key}`} />
+                <button 
+                  className={`${styles.cardBtn} ${selectedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "bg-stone-950 text-white"}`} 
+                  onClick={() => handleButtonClick(key, link)}
+                >
+                  Select
+                </button>
+              </div>
+            ))}
+
+            </div>
+            <div>
+            <button className={`text-black w-32 h-8 mt-[5px] mb-[5px] transition-[0.1s] border-2 border-solid border-black bg-white rounded-md hover:text-white hover:bg-slate-950 hover:border-2 hover:border-slate-950`}
+                onClick={handleCardsConfirmation}
+                > Confirm Cards </button>
             </div>
         </div>
         }
