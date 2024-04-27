@@ -43,6 +43,15 @@ export const GlobalContextProvider = ({ children }) => {
     window?.ethereum?.on('accountsChanged', () => resetParams());
   }, []);
 
+
+  useEffect( () => {
+      const isCards = JSON.parse(localStorage.getItem('cards'));
+      if(isCards){
+        console.log('LocalStorage: ',isCards);
+        setSelectedCards(isCards);
+      }
+  }, [])
+
   //* Set the wallet address to the state
   const updateCurrentWalletAddress = async () => {
     const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });

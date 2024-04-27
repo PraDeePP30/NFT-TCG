@@ -6,14 +6,13 @@ import Alert from '../components/Alert'
 import cardBack from '../assets/images/cardBack.png'
 
 const BattlePage = () => {
-    const { selectedCards } = useGlobalContext();
+    const { selectedCards, showAlert, setShowAlert } = useGlobalContext();
     console.log(selectedCards);
     const { battlename } = useParams();
     const [clickedIndex, setClickedIndex] = useState(null);
     const [toss, setToss] = useState(true);
     const regex = /^[0-9\b]+$/;
     const [number, setNumber] = useState('');
-    const {showAlert, setShowAlert} = useGlobalContext();
 
     const handleContainerClick = (index) => {
       setClickedIndex(index === clickedIndex ? null : index);

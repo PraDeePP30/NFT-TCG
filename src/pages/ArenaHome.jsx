@@ -67,12 +67,11 @@ const ArenaHome = () => {
     // console.log('Available jbbjhb:', availableCards);/
     // console.log("Hiiii");
     // setTimeout(() => {
+    localStorage.setItem('cards', [JSON.stringify(selectedCards)]);
     console.log('Card Minted',cardMinted);
     fetchAvailableCards();
     // }, 3000);
-    
   }, [contract, cardMinted]);
-
 
   useEffect(() => {
     if (availableCards.length < 1) {
@@ -195,6 +194,15 @@ const ArenaHome = () => {
   
   // const [selectedItems, setSelectedItems] = useState([]);
 
+  const handleJoinBattle = (pendingBattle) =>{
+    localStorage.setItem('cards', [JSON.stringify(selectedCards)]);
+
+    // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
+    setTimeout(() => {
+      navigate(`battle/${pendingBattle}`);
+    }, 1000);
+  }
+
   const handleButtonClick = (index) => {
     if (selectedCards.includes(index)) {
       // If selected, remove it from the list
@@ -229,7 +237,7 @@ const ArenaHome = () => {
             {gameData.pendingBattles.map((pendingBattle, index) => (
               <div key={index} className='flex flex-row m-2'>
                 <p className={`${styles.text} text-lg`}>{`${index+1}. ${pendingBattle}`}</p>
-                <button className={`${styles.btn} ml-6 w-2 h-10 text-center `} onClick={() => navigate(`battle/${pendingBattle}`)}>Join</button>
+                <button className={`${styles.btn} ml-6 w-2 h-10 text-center `} onClick={()=>handleJoinBattle(pendingBattle)}>Join</button>
               </div>
               ))}
             <p className={`${styles.infoText} hover:text-blue-700`} onClick={() => setDisplayBattlePage(false)}>
