@@ -26,7 +26,7 @@ const getCoords = (cardRef) => {
 
 const emptyAccount = '0x0000000000000000000000000000000000000000';
 
-export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert, player1Ref, player2Ref, setUpdateGameData, setCardMinted, cardMinted }) => {
+export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert, player1Ref, player2Ref, setUpdateGameData, setCardMinted, cardMinted, setBattleCreated }) => {
   const NewPlayerEventFilter = contract.filters.NewPlayer();
   AddNewEvent(NewPlayerEventFilter, provider, ({ args }) => {
     console.log('New player created!', args);
@@ -62,18 +62,27 @@ AddNewEvent(cardMintedEventFilter, provider, ({ args }) => {
   // console.log('later',cardMinted);
 });
 
+const battleCreatedEvent = contract.filters.BattleCreated();
+AddNewEvent(battleCreatedEvent, provider, ({args}) => {
+  console.log('New battle Created!', args);
+  // if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
+    if (walletAddress.toLowerCase() === args.host.toLowerCase()) {
+    // navigate(`/arena/tiger/${args.battleName}`);
+  }
+  setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
+});
   
 
-//   const NewBattleEventFilter = contract.filters.NewBattle();
-//   AddNewEvent(NewBattleEventFilter, provider, ({ args }) => {
-//     console.log('New battle started!', args, walletAddress);
+  // const NewBattleEventFilter = contract.filters.NewBattle();
+  // AddNewEvent(NewBattleEventFilter, provider, ({ args }) => {
+  //   console.log('New battle started!', args, walletAddress);
 
-//     if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
-//       navigate(`/battle/${args.battleName}`);
-//     }
+  //   if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
+  //     navigate(`/battle/${args.battleName}`);
+  //   }
 
-//     setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
-//   });
+  //   setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
+  // });
 
 //   const NewGameTokenEventFilter = contract.filters.NewGameToken();
 //   AddNewEvent(NewGameTokenEventFilter, provider, ({ args }) => {

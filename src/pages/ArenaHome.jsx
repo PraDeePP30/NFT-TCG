@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Nav } from '../components'
 import styles from '../styles'
 import { useGlobalContext } from '../context'
@@ -15,11 +15,11 @@ import { ethers } from 'ethers';
 const contactFlask = async () => {
   try {
     // Define the URL of your Flask server endpoint
-    const url = 'http://localhost:5000/your-endpoint'; // Replace with your actual Flask server endpoint
+    const url = 'http://127.0.0.1:5000/choose_card'; // Replace with your actual Flask server endpoint
 
     // Make a GET request to the Flask server
     const response = await fetch(url);
-
+    console.log('Flask Response: ',response);
     // Check if the request was successful
     if (!response.ok) {
       throw new Error('Network response was not ok.');
@@ -51,6 +51,7 @@ const ArenaHome = () => {
   // const [cardMinted, setCardMinted] = useState(false);
   const [displayBattlesPage, setDisplayBattlePage] = useState(false);
   const navigate = useNavigate();
+  const { mode } = useParams();
 
   var mintCardLink = '';
 
@@ -130,19 +131,52 @@ const ArenaHome = () => {
   };
 
 
-  const handleClick = async () => {
-    if (battleName === '' || battleName.trim() === '') return null;
+  const handleCreateBattle = async () => {
+    if (battleName === '' || battleName.trim() === '') {
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        message: 'Battle name should not be empty!',
+      });
+      return;
+    }
     console.log(battleName)
+    if(selectedCards.length !== 3){
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        message: 'You should select exactly 3 Cards.',
+      });
+      return;
+    }
     try {
-      // await contract.createBattle(battleName);
-
-      setWaitBattle(true);
+      await contract.createBattle(walletAddress, mode, battleName);
+      // setWaitBattle(true);
+      setTimeout(() => {
+        localStorage.setItem('cards', [JSON.stringify(selectedCards)]);
+        navigate(`/arena/${mode}/battle/${battleName}`);
+      }, 25000)
     } catch (error) {
       setErrorMessage(error);
     }
   };
 
+  const handleJoinBattle = (pendingBattle) =>{
+    if(selectedCards.length !== 3){
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        message: 'You should select exactly 3 Cards.',
+      });
+      return;
+    }
+    localStorage.setItem('cards', [JSON.stringify(selectedCards)]);
 
+    // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
+    setTimeout(() => {
+      navigate(`/arena/${mode}/battle/${pendingBattle}`);
+    }, 1000);
+  }
 
   
   // Usage example
@@ -164,6 +198,7 @@ const ArenaHome = () => {
           if (mintCardLink !== null) {
             // Data received, set flag to true to exit loop
             isDataReceived = true;
+            mintCardLink = mintCardLink.link;
           }
         }
         // Call the async function
@@ -175,7 +210,7 @@ const ArenaHome = () => {
             type: 'success',
             message: 'Card Minted Successfully',
           })
-        }, 15000);
+        }, 25000);
     }
     catch(error){
       // setErrorMessage(error);
@@ -193,15 +228,6 @@ const ArenaHome = () => {
   };
   
   // const [selectedItems, setSelectedItems] = useState([]);
-
-  const handleJoinBattle = (pendingBattle) =>{
-    localStorage.setItem('cards', [JSON.stringify(selectedCards)]);
-
-    // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
-    setTimeout(() => {
-      navigate(`battle/${pendingBattle}`);
-    }, 1000);
-  }
 
   const handleButtonClick = (index) => {
     if (selectedCards.includes(index)) {
@@ -260,7 +286,7 @@ const ArenaHome = () => {
                 :
                 <CustomButton
                 title="Create"
-                handleClick={handleClick}
+                handleClick={handleCreateBattle}
                 restStyles="w-1/2 h-[60px]"
               />
             }

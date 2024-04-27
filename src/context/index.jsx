@@ -17,6 +17,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [gameData, setGameData] = useState({ players: [], pendingBattles: [], activeBattle: null });
   const [showAlert, setShowAlert] = useState({ status: false, type: 'info', message: '' });
   const [battleName, setBattleName] = useState('');
+  // const [battleCreated, setBattleCreated] = useState(false);
   const [cardMinted, setCardMinted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [updateGameData, setUpdateGameData] = useState(0);
@@ -137,8 +138,8 @@ export const GlobalContextProvider = ({ children }) => {
     useEffect(() => {
     const fetchGameData = async () => {
       if (contract) {
-        // const fetchedBattles = await contract.getAllBattles();
-        const pendingBattles = ["Battle1","Battle2","Battle3","Battle4","Battle5"];
+        const pendingBattles = await contract.getIncompleteBattleNames("tiger");
+        // const pendingBattles = ["Battle1","Battle2","Battle3","Battle4","Battle5"];
         let activeBattle = null;
 
         // fetchedBattles.forEach((battle) => {

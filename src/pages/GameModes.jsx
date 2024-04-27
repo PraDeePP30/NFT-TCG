@@ -1,7 +1,7 @@
 import React from 'react'
 import { GameMode, Nav } from '../components'
 import styles from '../styles'
-import { useGlobalContext } from '../context'
+// import { useGlobalContext } from '../context'
 
 const GameModes = () => {
     const mode1 = {
