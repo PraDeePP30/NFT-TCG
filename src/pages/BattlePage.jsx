@@ -34,24 +34,30 @@ const contactFlask = async () => {
   };
 
 const BattlePage = () => {
-    const { selectedCards, showAlert, setShowAlert } = useGlobalContext();
-    console.log('SelectedCards:::',selectedCards);
+    const { selectedCards, showAlert, setShowAlert, selectedCardsStats } = useGlobalContext();
+    // console.log('SelectedCards:::',selectedCards);
     const { battlename } = useParams();
     const [clickedIndex, setClickedIndex] = useState(null);
+    const [selectedValue, setSelectedValue] = useState("select stat");
+    const [clickedCardStat, setClickedCardStat] = useState({});
+    const [clickedCard, setClickedCard] = useState('');
+    const [clickedStat, setClickedStat] = useState('');
     const [toss, setToss] = useState(true);
-    const regex = /^[0-9\b]+$/;
-    const [number, setNumber] = useState('');
 
-    const handleContainerClick = (index) => {
+    const handleContainerClick = (index, key) => {
       setClickedIndex(index === clickedIndex ? null : index);
+      const temp = selectedCardsStats[key];
+      setClickedCardStat(temp);
+      setClickedCard(key);
     };
 
-    const handleValueChange = (value) => {
-        setNumber(value);
-    }   
+    const handleCall = () =>{
+        console.log("Clicked Card",clickedCard);
+        console.log("Clicked Stat:", clickedStat);
+        console.log("Selected value:", selectedValue);
+    }
 
     const handleToss = async () => {
-        
         setToss(false);
     }
 
@@ -68,7 +74,7 @@ const BattlePage = () => {
                         key={key} 
                         className={`${styles.battleCardContainer} ${index === clickedIndex ? styles.clicked : ''}`} 
                         style={{ zIndex: index === clickedIndex ? Object.keys(selectedCards).length + 1 : Object.keys(selectedCards).length - index }}
-                        onClick={() => handleContainerClick(index)}
+                        onClick={() => handleContainerClick(index, key)}
                     >
                         <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${index + 1}`} />
                     </div>
@@ -89,14 +95,28 @@ const BattlePage = () => {
                     </div>
                     :
                     <div className='flex flex-row p-4 items-center justify-center'>
-                        <select name="cars" id="cars" className={styles.selectDropdown}>
-                            <option className={styles.selectOption} value="select stat">Select Stat</option>
-                            <option className={styles.selectOption} value="volvo">Volvo</option>
-                            <option className={styles.selectOption} value="saab">Saab</option>
-                            <option className={styles.selectOption} value="mercedes">Mercedes</option>
-                            <option className={styles.selectOption} value="audi">Audi</option>
+                        <select
+                            name="Traits"
+                            id="Traits"
+                            className={styles.selectDropdown}
+                            value={selectedValue}
+                            onChange={(e) => {setSelectedValue(e.target.value); setClickedStat(e.target.selectedOptions[0].getAttribute("stat"));}}
+                            >
+                            <option className={styles.selectOption} stat="select stat" value="select stat">Select Stat</option>
+                            {Object.entries(clickedCardStat).map(([key, value]) => {
+                                if (key !== "Name" && key !== "TotalScore" && key !== "image_link") {
+                                return (
+                                    <option key={key} className={styles.selectOption} stat={key} value={value}>
+                                    {key}:{value}
+                                    </option>
+                                );
+                                }
+                                return null;
+                            })}
                         </select>
-                        <button className='text-center rounded-md px-[20px] py-[8px] border-2 ml-4 bg-slate-950 text-white transition-[0.3s] hover:bg-blue-600 hover:border-blue-800'>Call</button>
+
+                        <button className='text-center rounded-md px-[20px] py-[8px] border-2 ml-4 bg-slate-950 text-white transition-[0.3s] hover:bg-blue-600 hover:border-blue-800'
+                            onClick={handleCall}>Call</button>
                     </div>
                 }
                 

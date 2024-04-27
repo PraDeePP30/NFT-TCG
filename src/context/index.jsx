@@ -23,7 +23,9 @@ export const GlobalContextProvider = ({ children }) => {
   const [updateGameData, setUpdateGameData] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCards, setSelectedCards] = useState({});
+  const [selectedCardsStats, setSelectedCardsStats] = useState({});
   const [availableCards, setAvailableCards] = useState({});
+  const [availableCardsStats, setAvailableCardsStats] = useState({});
   const [accountBalance, setAccountBalance] = useState(0);
   const player1Ref = useRef();
   const player2Ref = useRef();
@@ -47,13 +49,18 @@ export const GlobalContextProvider = ({ children }) => {
 
   useEffect( () => {
       const isCards = JSON.parse(localStorage.getItem('cards'));
-      if(isCards){
+      const isStats = JSON.parse(localStorage.getItem('cardsStats'));
+      if(isCards && isStats){
         console.log('LocalStorage: ',isCards);
+        console.log('LocalStorageStats: ',isStats);
         setSelectedCards(isCards);
+        setSelectedCardsStats(isStats);
       }
       else{
         console.log('LocalStorage: ',isCards);
+        console.log('LocalStorageStats: ',isStats);
         setSelectedCards({});
+        setSelectedCardsStats({});
       }
   }, [])
 
@@ -209,6 +216,10 @@ export const GlobalContextProvider = ({ children }) => {
         setAvailableCards,
         selectedCards,
         setSelectedCards,
+        availableCardsStats,
+        setAvailableCardsStats,
+        selectedCardsStats,
+        setSelectedCardsStats,
         cardMinted,
         accountBalance,
       }}
