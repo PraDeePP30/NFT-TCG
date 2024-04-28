@@ -26,7 +26,10 @@ const LobbyModal = () => {
         return (
             <>
                 <p className={styles.modalText}>
-                You are in the lobby!
+                You are in the Battle lobby!
+                </p>
+                <p className={styles.modalText}>
+                Please wait for the other player to join.
                 </p>
                 <CustomButton
                 title="Start Game"
@@ -40,7 +43,7 @@ const LobbyModal = () => {
   return (
     <Modal
       isOpen={modalIsOpen}
-      className={`absolute inset-0 ${styles.flexCenter} flex-col ${styles.glassEffect}`}
+      className={`absolute inset-0 ${styles.flexCenter} h-full w-full flex-col z-10 ${styles.glassEffect} `}
       overlayClassName="Overlay"
     >
       {generateStep()}
