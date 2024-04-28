@@ -43,8 +43,9 @@ const contactFlask = async () => {
 
 
 const ArenaHome = () => {
-  const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, 
-    setShowAlert, setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress, cardMinted, LobbyStatus, setLobbyStatus } = useGlobalContext();
+  const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, setShowAlert,
+          setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress, cardMinted, setAvailableCardsStats, availableCardsStats,
+          selectedCardsStats, setSelectedCardsStats,  LobbyStatus, setLobbyStatus  } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
   // const [availableCards, setAvailableCards] = useState([]);
   const [noCards, setNoCards] = useState(true);
@@ -70,6 +71,7 @@ const ArenaHome = () => {
     // console.log("Hiiii");
     // setTimeout(() => {
     localStorage.setItem('cards', JSON.stringify(selectedCards));
+    localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
     console.log('Card Minted',cardMinted);
     fetchAvailableCards();
     // }, 3000);
@@ -92,6 +94,7 @@ const ArenaHome = () => {
         let cards = await contract.getAvailableCards(walletAddress);
         console.log('cards: ',cards.length);
         const temp = {};
+        const tempStats = {};
         cards.forEach(async (item, index) => {
           // console.log(`Item at index ${index}: ${item}`);
           try {
@@ -109,7 +112,8 @@ const ArenaHome = () => {
             // }
             // setAvailableCards([...availableCards, data.image_link]);
             temp[item] = data.image_link;
-            // console.log('Temp:',temp);
+            tempStats[item] = data;
+            console.log('Temp stats:',tempStats);
           } catch (error) {
             console.error('Error fetching data:', error);
           }
@@ -117,6 +121,7 @@ const ArenaHome = () => {
       });
       setTimeout(() => {
         setAvailableCards(temp);
+        setAvailableCardsStats(tempStats);
       }, 500);
       // console.log('Available Cards:',availableCards);
      }
@@ -155,6 +160,7 @@ const ArenaHome = () => {
       // setWaitBattle(true);
       setTimeout(() => {
         localStorage.setItem('cards', JSON.stringify(selectedCards));
+        localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
         setLobbyStatus(true);
         navigate(`/arena/${mode}/battle/${battleName}`);
       }, 25000)
@@ -173,7 +179,7 @@ const ArenaHome = () => {
       return;
     }
     localStorage.setItem('cards', JSON.stringify(selectedCards));
-
+    localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
     // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
     setTimeout(() => {
       setLobbyStatus(true);
@@ -238,14 +244,20 @@ const ArenaHome = () => {
     if (selectedCards.hasOwnProperty(key)) {
         // If selected, remove it from the dictionary
         const updatedSelectedCards = { ...selectedCards }; // Create a copy of the dictionary
+        const updatedSelectedCardsStats = { ...selectedCardsStats}
         delete updatedSelectedCards[key]; // Remove the key from the copy
+        delete updatedSelectedCardsStats[key];
         setSelectedCards(updatedSelectedCards); // Update the state with the modified dictionary
+        setSelectedCardsStats(updatedSelectedCardsStats);
     } else {
         // If not selected, add it to the dictionary
         setSelectedCards({ ...selectedCards, [key]: link }); // Add the key to the dictionary with a truthy value
+        const temp = availableCardsStats[key];
+        setSelectedCardsStats({ ...selectedCardsStats, [key]: temp})
     }
 };
 
+// Confirmation and revoke under Development
   const handleCardsConfirmation = () =>{
     Object.keys(selectedCards).forEach(async (key) => {
       try {
@@ -254,13 +266,32 @@ const ArenaHome = () => {
       } catch (error) {
           console.error(`Error transferring card with key ${key}:`, error);
       }
-  });  
+      // finally{
+      //   setTimeout(async() =>{
+      //     const res = await contract.getOwnerOfTokenByName(key);
+      //     console.log('Token Owner: ',res);
+      //   },20000);
+      // }
+    });
+  }
+
+  const handleRevoke = () =>{
+    Object.keys(selectedCards).forEach(async (key) => {
+      try {
+          await contract.transferCardToContract(key); // Assuming `receiverAddress` is defined elsewhere
+          console.log(`Transferred card with key ${key} successfully.`);
+      } catch (error) {
+          console.error(`Error transferring card with key ${key}:`, error);
+      }
+  });
   }
 
   useEffect(() => {
     // console.log(gameData);
     console.log('Selected Items:', selectedCards);
     console.log('Available Cards:', availableCards);
+    console.log('Available Items Stats:',availableCardsStats);
+    console.log('Selected Items Stats:', selectedCardsStats);
   }, [selectedCards]);
   // useEffect(() => {
   //   const fetchBattles = async () => {
@@ -353,10 +384,13 @@ const ArenaHome = () => {
             ))}
 
             </div>
-            <div>
-            <button className={`text-black w-32 h-8 mt-[5px] mb-[5px] transition-[0.1s] border-2 border-solid border-black bg-white rounded-md hover:text-white hover:bg-slate-950 hover:border-2 hover:border-slate-950`}
-                onClick={handleCardsConfirmation}
-                > Confirm Cards </button>
+            <div className='flex flex-row items-center justify-center'>
+              <button className={`text-black w-32 h-8 mt-[5px] mb-[5px] transition-[0.1s] border-2 border-solid border-black bg-white rounded-md hover:text-white hover:bg-slate-950 hover:border-2 hover:border-slate-950`}
+                  onClick={handleCardsConfirmation}
+                  > Confirm Cards </button>
+              <button className={`text-black w-32 h-8 mt-[5px] mb-[5px] transition-[0.1s] border-2 border-solid border-black bg-white rounded-md hover:text-white hover:bg-slate-950 hover:border-2 hover:border-slate-950`}
+              onClick={handleRevoke}
+              > Revoke Cards </button>
             </div>
         </div>
         }
