@@ -43,7 +43,8 @@ const contactFlask = async () => {
 
 
 const ArenaHome = () => {
-  const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, setShowAlert, setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress, cardMinted } = useGlobalContext();
+  const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, 
+    setShowAlert, setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress, cardMinted, LobbyStatus, setLobbyStatus } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
   // const [availableCards, setAvailableCards] = useState([]);
   const [noCards, setNoCards] = useState(true);
@@ -154,6 +155,7 @@ const ArenaHome = () => {
       // setWaitBattle(true);
       setTimeout(() => {
         localStorage.setItem('cards', JSON.stringify(selectedCards));
+        setLobbyStatus(true);
         navigate(`/arena/${mode}/battle/${battleName}`);
       }, 25000)
     } catch (error) {
@@ -174,8 +176,10 @@ const ArenaHome = () => {
 
     // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
     setTimeout(() => {
+      setLobbyStatus(true);
       navigate(`/arena/${mode}/battle/${pendingBattle}`);
     }, 1000);
+      
   }
 
   

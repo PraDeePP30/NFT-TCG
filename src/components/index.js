@@ -1,4 +1,5 @@
 import OnboardModal from './OnboardModal';
+import LobbyModal from './LobbyModal';
 import CustomButton from './CustomButton';
 import CustomInput from './CustomInput';
 import LoginRegisterModal from './LoginRegisterModal'
@@ -13,4 +14,5 @@ export {
   LoginRegisterModal,
   GameMode,
   Alert,
+  LobbyModal,
 };

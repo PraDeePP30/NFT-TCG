@@ -25,6 +25,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [selectedCards, setSelectedCards] = useState({});
   const [availableCards, setAvailableCards] = useState({});
   const [accountBalance, setAccountBalance] = useState(0);
+  const [LobbyStatus, setLobbyStatus] = useState(false);
   const player1Ref = useRef();
   const player2Ref = useRef();
 
@@ -211,6 +212,8 @@ export const GlobalContextProvider = ({ children }) => {
         setSelectedCards,
         cardMinted,
         accountBalance,
+        LobbyStatus,
+        setLobbyStatus,
       }}
     >
       {children}

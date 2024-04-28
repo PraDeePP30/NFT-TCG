@@ -42,6 +42,8 @@ const BattlePage = () => {
     const regex = /^[0-9\b]+$/;
     const [number, setNumber] = useState('');
 
+    const [modal, setModal] = useState(false);
+
     const handleContainerClick = (index) => {
       setClickedIndex(index === clickedIndex ? null : index);
     };
@@ -56,7 +58,7 @@ const BattlePage = () => {
     }
 
     return (
-    <div className='w-full h-screen flex flex-col'>
+     <div className='w-full h-screen flex flex-col'>     
         {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
         {/* <h1 className='text-3xl text-slate-950 text-center mb-4'>Battle Page</h1> */}
         <p className='mt-4 text-3xl font-bold text-slate-950 text-center mb-4'>Welcome to the Battle {battlename}</p>
@@ -90,11 +92,11 @@ const BattlePage = () => {
                     :
                     <div className='flex flex-row p-4 items-center justify-center'>
                         <select name="cars" id="cars" className={styles.selectDropdown}>
-                            <option className={styles.selectOption} value="select stat">Select Stat</option>
-                            <option className={styles.selectOption} value="volvo">Volvo</option>
-                            <option className={styles.selectOption} value="saab">Saab</option>
-                            <option className={styles.selectOption} value="mercedes">Mercedes</option>
-                            <option className={styles.selectOption} value="audi">Audi</option>
+                            <option className={styles.selectOption} value='Select'>Select</option>
+                            <option className={styles.selectOption} value="Ferrocity">Ferrocity</option>
+                            <option className={styles.selectOption} value="Stealth">Stealth</option>
+                            <option className={styles.selectOption} value="Defence">Defence</option>
+                            <option className={styles.selectOption} value="Leadership">Leadership</option>
                         </select>
                         <button className='text-center rounded-md px-[20px] py-[8px] border-2 ml-4 bg-slate-950 text-white transition-[0.3s] hover:bg-blue-600 hover:border-blue-800'>Call</button>
                     </div>
