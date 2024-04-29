@@ -6,6 +6,7 @@ import { useGlobalContext } from '../context'
 import { CustomButton, CustomInput} from '../components'
 import Alert from '../components/Alert'
 import { ethers } from 'ethers';
+import { local } from 'web3modal'
 
 // import Card1 from '../assets/images/00.png'
 // import Card2 from '../assets/images/01.png'
@@ -43,17 +44,17 @@ const contactFlask = async () => {
 
 
 const ArenaHome = () => {
-  const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, setShowAlert, setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress, cardMinted, setAvailableCardsStats, availableCardsStats, selectedCardsStats, setSelectedCardsStats } = useGlobalContext();
+  const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, setShowAlert, setErrorMessage, showAlert, walletAddress, cardMinted, setAvailableCardsStats, availableCardsStats } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
-  // const [availableCards, setAvailableCards] = useState([]);
+  const [selectedCards, setSelectedCards] = useState({});
+  const [selectedCardsStats, setSelectedCardsStats] = useState({});
   const [noCards, setNoCards] = useState(true);
-  // const [reload, setReload] = useState(true);
-  // const [cardMinted, setCardMinted] = useState(false);
+  const [confirmedCards, setConfirmedCards] = useState({});
+  const [revokeCards, setRevokeCards] = useState({});
+  const [confirmedCardsStats, setConfirmedCardsStats] = useState({});
   const [displayBattlesPage, setDisplayBattlePage] = useState(false);
   const navigate = useNavigate();
   const { mode } = useParams();
-
-  var mintCardLink = '';
 
   useEffect(() => {
     if (gameData?.activeBattle?.battleStatus === 1) {
@@ -64,16 +65,35 @@ const ArenaHome = () => {
     console.log();
   }, [gameData]);
 
+  useEffect(()=> {
+      const isCards = JSON.parse(localStorage.getItem('confirmedCards'));
+      const isStats = JSON.parse(localStorage.getItem('confirmedCardsStats'));
+      if(isCards && isStats){
+        console.log('ConfirmedCards LS: ',isCards);
+        console.log('ConfirmedCardsStats LS: ',isStats);
+        setConfirmedCards(isCards);
+        setConfirmedCardsStats(isStats);
+      }
+      else{
+        console.log('ConfirmedCards LS: ',isCards);
+        console.log('ConfirmedCardsStats LS: ',isStats);
+        setConfirmedCards({});
+        setConfirmedCardsStats({});
+      }
+  },[]);
+
   useEffect(() => {
-    // console.log('Available jbbjhb:', availableCards);/
-    // console.log("Hiiii");
-    // setTimeout(() => {
-    localStorage.setItem('cards', JSON.stringify(selectedCards));
-    localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
+    // localStorage.setItem('cards', JSON.stringify(selectedCards));
+    // localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
     console.log('Card Minted',cardMinted);
     fetchAvailableCards();
-    // }, 3000);
-  }, [contract, cardMinted]);
+  }, [contract, cardMinted, confirmedCards]);
+
+  useEffect(() => {
+    localStorage.setItem('confirmedCards', JSON.stringify(confirmedCards));
+    localStorage.setItem('confirmedCardsStats', JSON.stringify(confirmedCardsStats));
+    fetchAvailableCards();
+  },[updateTransfer]);
 
   useEffect(() => {
     if (Object.keys(availableCards).length < 1) {
@@ -134,7 +154,6 @@ const ArenaHome = () => {
     }
   };
 
-
   const handleCreateBattle = async () => {
     if (battleName === '' || battleName.trim() === '') {
       setShowAlert({
@@ -157,8 +176,10 @@ const ArenaHome = () => {
       await contract.createBattle(walletAddress, mode, battleName);
       // setWaitBattle(true);
       setTimeout(() => {
-        localStorage.setItem('cards', JSON.stringify(selectedCards));
-        localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
+        // localStorage.setItem('cards', JSON.stringify(selectedCards));
+        // localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
+        localStorage.setItem('confirmedCards', JSON.stringify(confirmedCards));
+        localStorage.setItem('confirmedCardsStats', JSON.stringify(confirmedCardsStats));
         navigate(`/arena/${mode}/battle/${battleName}`);
       }, 25000)
     } catch (error) {
@@ -175,8 +196,10 @@ const ArenaHome = () => {
       });
       return;
     }
-    localStorage.setItem('cards', JSON.stringify(selectedCards));
-    localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
+    localStorage.setItem('confirmedCards', JSON.stringify(confirmedCards));
+    localStorage.setItem('confirmedCardsStats', JSON.stringify(confirmedCardsStats));
+    // localStorage.setItem('cards', JSON.stringify(selectedCards));
+    // localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
     // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
     setTimeout(() => {
       navigate(`/arena/${mode}/battle/${pendingBattle}`);
@@ -252,8 +275,38 @@ const ArenaHome = () => {
     }
 };
 
+const handleRevokeSelection = (key, link) => {
+  // Check if the key exists in the selectedCards dictionary
+  if (revokeCards.hasOwnProperty(key)) {
+      // If selected, remove it from the dictionary
+      const updatedRevokeCards = { ...revokeCards }; // Create a copy of the dictionary
+      // const updatedRevokeCardsStats = { ...revokeCardsStats};
+      delete updatedRevokeCards[key]; // Remove the key from the copy
+      // delete updatedRevokeCardsStats[key];
+      setRevokeCards(updatedRevokeCards); // Update the state with the modified dictionary
+      // setRevokeCardsStats(updatedRevokeCardsStats);
+  } else {
+      // If not selected, add it to the dictionary
+      setRevokeCards({ ...revokeCards, [key]: link }); // Add the key to the dictionary with a truthy value
+      // const temp = availableCardsStats[key];
+      // setRevokeCardsStats({ ...revokeCardsStats, [key]: temp})
+  }
+};
+
 // Confirmation and revoke under Development
   const handleCardsConfirmation = () =>{
+    const confirmedCardsLength = Object.keys(confirmedCards).length;
+    const selectedCardsLength = Object.keys(selectedCards).length;
+    if((confirmedCardsLength+selectedCardsLength)>3){
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        message: 'You can only select 3 cards',
+      });
+      return;
+    }
+    
+    // setConfirmedCardsStats(selectedCardsStats);
     Object.keys(selectedCards).forEach(async (key) => {
       try {
           await contract.transferCardToContract(key); // Assuming `receiverAddress` is defined elsewhere
@@ -268,17 +321,42 @@ const ArenaHome = () => {
       //   },20000);
       // }
     });
+    setTimeout(() => {
+      setConfirmedCards(prevConfirmedCards => ({
+        ...prevConfirmedCards,
+        ...selectedCards
+      }));
+      setConfirmedCardsStats(prevConfirmedCardsStats => ({
+        ...prevConfirmedCardsStats,
+        ...selectedCardsStats
+      }));
+      setSelectedCards({});
+      setSelectedCardsStats({});
+    }, 25000);
   }
 
   const handleRevoke = () =>{
-    Object.keys(selectedCards).forEach(async (key) => {
+    Object.keys(revokeCards).forEach(async (key) => {
       try {
-          await contract.transferCardToContract(key); // Assuming `receiverAddress` is defined elsewhere
+          await contract.transferCardFromContract(walletAddress,key); // Assuming `receiverAddress` is defined elsewhere
+          if (confirmedCards.hasOwnProperty(key)) {
+            // If selected, remove it from the dictionary
+            const updatedConfirmedCards = { ...confirmedCards }; // Create a copy of the dictionary
+            const updatedConfirmedCardsStats = { ...confirmedCardsStats};
+            delete updatedConfirmedCards[key]; // Remove the key from the copy
+            delete updatedConfirmedCardsStats[key];
+            setConfirmedCards(updatedConfirmedCards); // Update the state with the modified dictionary
+            setConfirmedCardsStats(updatedConfirmedCardsStats);
+        }
           console.log(`Transferred card with key ${key} successfully.`);
       } catch (error) {
           console.error(`Error transferring card with key ${key}:`, error);
       }
   });
+    setRevokeCards({});
+    // setTimeout(() => {
+      
+    // }, 25000);
   }
 
   useEffect(() => {
@@ -287,6 +365,7 @@ const ArenaHome = () => {
     console.log('Available Cards:', availableCards);
     console.log('Available Items Stats:',availableCardsStats);
     console.log('Selected Items Stats:', selectedCardsStats);
+    console.log('Confirmed Items:', confirmedCards);
   }, [selectedCards]);
   // useEffect(() => {
   //   const fetchBattles = async () => {
@@ -352,7 +431,7 @@ const ArenaHome = () => {
           Object.keys(availableCards).length < 1 ?
           <div className='w-9/12 h-full flex flex-col items-center justify-center'>
             <p className={`${styles.text} mt-60`}>You dont have any cards...</p>
-            <button className={`${styles.buttonLight} mb-72 hover:border-2 hover:border-slate-950`}
+            <button className={`text-black w-[80px] text-[1.25rem] h-14 m-4 transition-[0.3s] border-2 border-solid border-black bg-white rounded-md hover:text-white hover:bg-slate-950 mb-72 hover:border-2 hover:border-slate-950`}
               onClick={fetchData}
               > Mint </button>
           </div>
@@ -366,17 +445,31 @@ const ArenaHome = () => {
             }
             
             <div className={styles.arenaHomeCardsContainer}>
-            {Object.entries(availableCards).map(([key, link]) => (
-              <div key={key} className={styles.cardContainer}>
-                <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${key}`} />
-                <button 
-                  className={`${styles.cardBtn} ${selectedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "bg-stone-950 text-white"}`} 
-                  onClick={() => handleButtonClick(key, link)}
-                >
-                  Select
-                </button>
-              </div>
-            ))}
+              {Object.keys(confirmedCards).length > 0 && 
+                Object.entries(confirmedCards).map(([key, link]) => (
+                  <div key={key} className={styles.cardContainer}>
+                    <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${key}`} />
+                    <button 
+                      className={`${styles.cardBtn} ${!revokeCards.hasOwnProperty(key) ? "bg-green-500 text-white" : "bg-red-500 text-white"}`} 
+                      onClick={() => handleRevokeSelection(key, link)}
+                    >
+                      Confirmed
+                    </button>
+                  </div>
+                ))
+              }
+
+              {Object.entries(availableCards).map(([key, link]) => (
+                <div key={key} className={styles.cardContainer}>
+                  <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${key}`} />
+                  <button 
+                    className={`${styles.cardBtn} ${selectedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "bg-stone-950 text-white"}`} 
+                    onClick={() => handleButtonClick(key, link)}
+                  >
+                    Select
+                  </button>
+                </div>
+              ))}
 
             </div>
             <div className='flex flex-row items-center justify-center'>

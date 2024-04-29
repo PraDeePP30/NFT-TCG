@@ -18,12 +18,15 @@ export const GlobalContextProvider = ({ children }) => {
   const [showAlert, setShowAlert] = useState({ status: false, type: 'info', message: '' });
   const [battleName, setBattleName] = useState('');
   // const [battleCreated, setBattleCreated] = useState(false);
+  const [updateTransfer, setUpdateTransfer] = useState(0);
   const [cardMinted, setCardMinted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [updateGameData, setUpdateGameData] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCards, setSelectedCards] = useState({});
-  const [selectedCardsStats, setSelectedCardsStats] = useState({});
+  const [confirmedCards, setConfirmedCards] = useState({});
+  const [confirmedCardsStats, setConfirmedCardsStats] = useState({});
+  // const [selectedCards, setSelectedCards] = useState({});
+  // const [selectedCardsStats, setSelectedCardsStats] = useState({});
   const [availableCards, setAvailableCards] = useState({});
   const [availableCardsStats, setAvailableCardsStats] = useState({});
   const [accountBalance, setAccountBalance] = useState(0);
@@ -46,23 +49,39 @@ export const GlobalContextProvider = ({ children }) => {
     window?.ethereum?.on('accountsChanged', () => resetParams());
   }, []);
 
+  useEffect(()=> {
+    const isCards = JSON.parse(localStorage.getItem('confirmedCards'));
+    const isStats = JSON.parse(localStorage.getItem('confirmedCardsStats'));
+    if(isCards && isStats){
+      console.log('ConfirmedCards LS: ',isCards);
+      console.log('ConfirmedCardsStats LS: ',isStats);
+      setConfirmedCards(isCards);
+      setConfirmedCardsStats(isStats);
+    }
+    else{
+      console.log('ConfirmedCards LS: ',isCards);
+      console.log('ConfirmedCardsStats LS: ',isStats);
+      setConfirmedCards({});
+      setConfirmedCardsStats({});
+    }
+},[]);
 
-  useEffect( () => {
-      const isCards = JSON.parse(localStorage.getItem('cards'));
-      const isStats = JSON.parse(localStorage.getItem('cardsStats'));
-      if(isCards && isStats){
-        console.log('LocalStorage: ',isCards);
-        console.log('LocalStorageStats: ',isStats);
-        setSelectedCards(isCards);
-        setSelectedCardsStats(isStats);
-      }
-      else{
-        console.log('LocalStorage: ',isCards);
-        console.log('LocalStorageStats: ',isStats);
-        setSelectedCards({});
-        setSelectedCardsStats({});
-      }
-  }, [])
+  // useEffect( () => {
+  //     const isCards = JSON.parse(localStorage.getItem('cards'));
+  //     const isStats = JSON.parse(localStorage.getItem('cardsStats'));
+  //     if(isCards && isStats){
+  //       console.log('LocalStorage: ',isCards);
+  //       console.log('LocalStorageStats: ',isStats);
+  //       setSelectedCards(isCards);
+  //       setSelectedCardsStats(isStats);
+  //     }
+  //     else{
+  //       console.log('LocalStorage: ',isCards);
+  //       console.log('LocalStorageStats: ',isStats);
+  //       setSelectedCards({});
+  //       setSelectedCardsStats({});
+  //     }
+  // }, [])
 
   //* Set the wallet address to the state
   const updateCurrentWalletAddress = async () => {
@@ -118,6 +137,8 @@ export const GlobalContextProvider = ({ children }) => {
         setUpdateGameData,
         setCardMinted,
         cardMinted,
+        updateTransfer,
+        setUpdateTransfer
       });
     }
   }, [step]);
@@ -214,14 +235,16 @@ export const GlobalContextProvider = ({ children }) => {
         setIsOpen,
         availableCards,
         setAvailableCards,
-        selectedCards,
-        setSelectedCards,
         availableCardsStats,
         setAvailableCardsStats,
-        selectedCardsStats,
-        setSelectedCardsStats,
         cardMinted,
         accountBalance,
+        updateTransfer,
+        setUpdateTransfer,
+        confirmedCards,
+        confirmedCardsStats,
+        setConfirmedCards,
+        setConfirmedCardsStats,
       }}
     >
       {children}

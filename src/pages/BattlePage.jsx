@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useParams } from 'react-router-dom';
 import styles from '../styles'
 import { useGlobalContext } from '../context'
@@ -43,10 +43,12 @@ const BattlePage = () => {
     const [clickedCard, setClickedCard] = useState('');
     const [clickedStat, setClickedStat] = useState('');
     const [toss, setToss] = useState(true);
+    const [confirmedCards, setConfirmedCards] = useState({});
+    const [confirmedCardsStats, setConfirmedCardsStats] = useState({});
 
     const handleContainerClick = (index, key) => {
       setClickedIndex(index === clickedIndex ? null : index);
-      const temp = selectedCardsStats[key];
+      const temp = confirmedCardsStats[key];
       setClickedCardStat(temp);
       setClickedCard(key);
     };
@@ -61,19 +63,36 @@ const BattlePage = () => {
         setToss(false);
     }
 
+    useEffect(()=> {
+        const isCards = JSON.parse(localStorage.getItem('confirmedCards'));
+        const isStats = JSON.parse(localStorage.getItem('confirmedCardsStats'));
+        if(isCards && isStats){
+          console.log('ConfirmedCards LS: ',isCards);
+          console.log('ConfirmedCardsStats LS: ',isStats);
+          setConfirmedCards(isCards);
+          setConfirmedCardsStats(isStats);
+        }
+        else{
+          console.log('ConfirmedCards LS: ',isCards);
+          console.log('ConfirmedCardsStats LS: ',isStats);
+          setConfirmedCards({});
+          setConfirmedCardsStats({});
+        }
+    },[]);
+
     return (
     <div className='w-full h-screen flex flex-col'>
         {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
         {/* <h1 className='text-3xl text-slate-950 text-center mb-4'>Battle Page</h1> */}
-        <p className='mt-4 text-3xl font-bold text-slate-950 text-center mb-4'>Welcome to the Battle {battlename}</p>
+        <p className='mt-4 text-3xl font-bold text-slate-950 text-center mb-4'>Battle {battlename}</p>
         <div className='flex flex-row h-full w-full'>
             <div className='flex flex-col w-6/12 items-center'>
                 <div className={styles.battlePageContainer}>
-                {Object.entries(selectedCards).map(([key, link], index) => (
+                {Object.entries(confirmedCards).map(([key, link], index) => (
                     <div 
                         key={key} 
                         className={`${styles.battleCardContainer} ${index === clickedIndex ? styles.clicked : ''}`} 
-                        style={{ zIndex: index === clickedIndex ? Object.keys(selectedCards).length + 1 : Object.keys(selectedCards).length - index }}
+                        style={{ zIndex: index === clickedIndex ? Object.keys(confirmedCards).length + 1 : Object.keys(confirmedCards).length - index }}
                         onClick={() => handleContainerClick(index, key)}
                     >
                         <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${index + 1}`} />
@@ -124,7 +143,7 @@ const BattlePage = () => {
             
 
             <div className={styles.battlePageContainerFixed}>
-            {Object.entries(selectedCards).map(([key, link]) => (
+            {Object.entries(confirmedCards).map(([key, link]) => (
                 <div key={key} className={`${styles.battleCardContainerFixed} `}>
                     <img src={cardBack} className={`w-full h-full object-contain mb-2`} alt={`Image ${key}`} />
                     {/* <button className={`${styles.btn} ${ selectedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "text-white"}`} onClick={() => handleButtonClick(key)}>Select</button> */}

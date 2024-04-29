@@ -7,24 +7,25 @@ const GameModes = () => {
     const mode1 = {
         imageAlt: 'image',
         title: 'Tiger Arena',
-        imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModes.png',
+        // imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModes.png',
+        imageSrc: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/470f9a30-16fd-4122-bd0b-8db6a82e6ec4/d9bd6tr-117e99db-6608-4489-aa98-39bca349ad65.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzQ3MGY5YTMwLTE2ZmQtNDEyMi1iZDBiLThkYjZhODJlNmVjNFwvZDliZDZ0ci0xMTdlOTlkYi02NjA4LTQ0ODktYWE5OC0zOWJjYTM0OWFkNjUuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.7Sspga5YCRv5cOPQWhHG9uq5ZJ0aTW220sbT7KiQZc4',
         value: 'tiger'
     }
     const mode2 = {
         imageAlt: 'image',
-        title: 'Anime Arena',
+        title: 'X Arena',
         imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModesBW.png',
         value: 'anime'
     }
     const mode3 = {
         imageAlt: 'image',
-        title: 'Tiger Theme',
+        title: 'Y Arena',
         imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModesBW.png',
         value: 'tiger'
     }
     const mode4 = {
         imageAlt: 'image',
-        title: 'Tiger Theme',
+        title: 'Z Arena',
         imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModesBW.png',
         value: 'tiger'
     }

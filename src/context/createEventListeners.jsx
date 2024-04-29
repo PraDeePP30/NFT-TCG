@@ -26,7 +26,7 @@ const getCoords = (cardRef) => {
 
 const emptyAccount = '0x0000000000000000000000000000000000000000';
 
-export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert, player1Ref, player2Ref, setUpdateGameData, setCardMinted, cardMinted, setBattleCreated }) => {
+export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert, player1Ref, player2Ref, setUpdateGameData, setCardMinted, cardMinted, setBattleCreated, updateTransfer, setUpdateTransfer }) => {
   const NewPlayerEventFilter = contract.filters.NewPlayer();
   AddNewEvent(NewPlayerEventFilter, provider, ({ args }) => {
     console.log('New player created!', args);
@@ -72,6 +72,26 @@ AddNewEvent(battleCreatedEvent, provider, ({args}) => {
   setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
 });
   
+
+const TransferToContractEvent = contract.filters.ToContract();
+AddNewEvent(TransferToContractEvent, provider, ({args}) => {
+  console.log('Token transfered to Contract!', args);
+  // if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
+    if (walletAddress.toLowerCase() === args.from.toLowerCase()) {
+    // navigate(`/arena/tiger/${args.battleName}`);
+  }
+  setUpdateTransfer((prevUpdateTransfer) => prevUpdateTransfer+1);
+});
+
+const TransferFromContractEvent = contract.filters.FromContract();
+AddNewEvent(TransferFromContractEvent, provider, ({args}) => {
+  console.log('Token revoked from contract!', args);
+  // if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
+    if (walletAddress.toLowerCase() === args.from.toLowerCase()) {
+    // navigate(`/arena/tiger/${args.battleName}`);
+  }
+  setUpdateTransfer((prevUpdateTransfer) => prevUpdateTransfer+1);
+});
 
   // const NewBattleEventFilter = contract.filters.NewBattle();
   // AddNewEvent(NewBattleEventFilter, provider, ({ args }) => {
