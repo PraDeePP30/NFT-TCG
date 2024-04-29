@@ -71,7 +71,18 @@ AddNewEvent(battleCreatedEvent, provider, ({args}) => {
   }
   setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
 });
-  
+
+const battleJoinedEvent = contract.filters.BattleJoined();
+AddNewEvent(battleJoinedEvent, provider, ({args}) => {
+  console.log('Battle Joined!', args);
+  const opponent = args.opponent;
+  const battleName = args.battleName;
+  // if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
+  if (walletAddress.toLowerCase() === args.host.toLowerCase()) {
+    // navigate(`/arena/tiger/${args.battleName}`);
+  }
+  setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
+});
 
   // const NewBattleEventFilter = contract.filters.NewBattle();
   // AddNewEvent(NewBattleEventFilter, provider, ({ args }) => {
