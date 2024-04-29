@@ -6,25 +6,25 @@ import styles from '../styles'
 const GameModes = () => {
     const mode1 = {
         imageAlt: 'image',
-        title: 'Tiger Arena',
+        title: 'Tiger Theme',
         imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModes.png',
         value: 'tiger'
     }
     const mode2 = {
         imageAlt: 'image',
-        title: 'Anime Arena',
+        title: 'Anime Theme',
         imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModesBW.png',
         value: 'anime'
     }
     const mode3 = {
         imageAlt: 'image',
-        title: 'Tiger Theme',
+        title: 'Space Theme',
         imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModesBW.png',
         value: 'tiger'
     }
     const mode4 = {
         imageAlt: 'image',
-        title: 'Tiger Theme',
+        title: 'Jurassic Theme',
         imageSrc: 'https://bafybeif3jsargnwtj3mni2a7tyxxs6a27wtkyok5zvald7yzqdzlmod4sq.ipfs.w3s.link/GameModesBW.png',
         value: 'tiger'
     }

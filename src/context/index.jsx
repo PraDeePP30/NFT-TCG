@@ -24,6 +24,8 @@ export const GlobalContextProvider = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCards, setSelectedCards] = useState({});
   const [selectedCardsStats, setSelectedCardsStats] = useState({});
+  const [confirmedCards, setConfirmedCards ] = useState({});
+  const [confirmedCardsStats, setConfirmedCardsStats ] = useState({});
   const [availableCards, setAvailableCards] = useState({});
   const [availableCardsStats, setAvailableCardsStats] = useState({});
   const [accountBalance, setAccountBalance] = useState(0);
@@ -51,6 +53,8 @@ export const GlobalContextProvider = ({ children }) => {
   useEffect( () => {
       const isCards = JSON.parse(localStorage.getItem('cards'));
       const isStats = JSON.parse(localStorage.getItem('cardsStats'));
+      const isConfirmed = JSON.parse(localStorage.getItem('confirmedCards'));
+      const isConfirmedStats = JSON.parse(localStorage.getItem('confirmedCardsStats'));
       if(isCards && isStats){
         console.log('LocalStorage: ',isCards);
         console.log('LocalStorageStats: ',isStats);
@@ -63,6 +67,17 @@ export const GlobalContextProvider = ({ children }) => {
         setSelectedCards({});
         setSelectedCardsStats({});
       }
+      if (isConfirmed){
+        console.log('LocalStorageConfirmed: ',isConfirmed);
+        console.log('LocalStorageConfirmedStats: ',isConfirmedStats);
+        setConfirmedCards(isConfirmed);
+        setConfirmedCardsStats(isConfirmedStats);
+      }
+      else{
+        setConfirmedCards({});
+        setConfirmedCardsStats({});
+      }
+
   }, [])
 
   //* Set the wallet address to the state
@@ -225,6 +240,10 @@ export const GlobalContextProvider = ({ children }) => {
         accountBalance,
         LobbyStatus,
         setLobbyStatus,
+        confirmedCards, 
+        setConfirmedCards, 
+        confirmedCardsStats,
+        setConfirmedCardsStats
       }}
     >
       {children}

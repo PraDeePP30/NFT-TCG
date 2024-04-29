@@ -7,11 +7,6 @@ import { CustomButton, CustomInput} from '../components'
 import Alert from '../components/Alert'
 import { ethers } from 'ethers';
 
-// import Card1 from '../assets/images/00.png'
-// import Card2 from '../assets/images/01.png'
-// import Card3 from '../assets/images/02.png'
-// import Card4 from '../assets/images/03.png'
-
 const contactFlask = async () => {
   try {
     // Define the URL of your Flask server endpoint
@@ -45,7 +40,7 @@ const contactFlask = async () => {
 const ArenaHome = () => {
   const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, setShowAlert,
           setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress, cardMinted, setAvailableCardsStats, availableCardsStats,
-          selectedCardsStats, setSelectedCardsStats,  LobbyStatus, setLobbyStatus  } = useGlobalContext();
+          selectedCardsStats, setSelectedCardsStats,  LobbyStatus, setLobbyStatus, confirmedCards, setConfirmedCards,confirmedCardsStats, setConfirmedCardsStats  } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
   // const [availableCards, setAvailableCards] = useState([]);
   const [noCards, setNoCards] = useState(true);
@@ -67,13 +62,16 @@ const ArenaHome = () => {
   }, [gameData]);
 
   useEffect(() => {
-    // console.log('Available jbbjhb:', availableCards);/
+    console.log('confirmed Cards:', confirmedCards);
     // console.log("Hiiii");
     // setTimeout(() => {
     localStorage.setItem('cards', JSON.stringify(selectedCards));
     localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
+    localStorage.setItem('confirmedCards', JSON.stringify(confirmedCards));
+    localStorage.setItem('confirmedCardsStats', JSON.stringify(confirmedCardsStats));
     console.log('Card Minted',cardMinted);
     fetchAvailableCards();
+    fetchConfirmedCards();
     // }, 3000);
   }, [contract, cardMinted]);
 
@@ -136,6 +134,55 @@ const ArenaHome = () => {
     }
   };
 
+  const fetchConfirmedCards = async () => {
+    try{
+        console.log("Fetch Cards");
+        // console.log(contract);
+        if(contract){
+        let cards = await contract.getContractCards(walletAddress);
+        console.log('selected cards: ',cards.length);
+        const temp = {};
+        const tempStats = {};
+        cards.forEach(async (item, index) => {
+          // console.log(`Item at index ${index}: ${item}`);
+          try {
+            const response = await fetch(item);
+            // console.log(response);
+            if (!response.ok) {
+              throw new Error('Network response was not ok.');
+            }
+            
+            const data = await response.json();
+            // console.log('data:',data);
+            // if(!availableCards.includes(data.image_link)){
+            //   console.log('Card Link: ',data.image_link);
+            //   setAvailableCards([...availableCards, data.image_link]);
+            // }
+            // setAvailableCards([...availableCards, data.image_link]);
+            temp[item] = data.image_link;
+            tempStats[item] = data;
+            console.log('Temp stats:',tempStats);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+          // console.log('Json Data',jsonData);
+      });
+      setTimeout(() => {
+        setConfirmedCards(temp);
+        setConfirmedCardsStats(tempStats);
+      }, 500);
+      console.log('Selected Cards:',availableCards);
+     }
+    }
+    catch(error){
+      console.log(error);
+      setShowAlert({
+        status: true,
+        type: 'failure',
+        message: error.message,
+      });
+    }
+  };
 
   const handleCreateBattle = async () => {
     if (battleName === '' || battleName.trim() === '') {
@@ -147,7 +194,7 @@ const ArenaHome = () => {
       return;
     }
     console.log(battleName)
-    if(Object.keys(selectedCards).length !== 3){
+    if(Object.keys(confirmedCards).length !== 3){
       setShowAlert({
         status: true,
         type: 'failure',
@@ -159,8 +206,8 @@ const ArenaHome = () => {
       await contract.createBattle(walletAddress, mode, battleName);
       // setWaitBattle(true);
       setTimeout(() => {
-        localStorage.setItem('cards', JSON.stringify(selectedCards));
-        localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
+        localStorage.setItem('confirmedCards', JSON.stringify(confirmedCards));
+        localStorage.setItem('confirmedCardsStats', JSON.stringify(confirmedCardsStats));
         setLobbyStatus(true);
         navigate(`/arena/${mode}/battle/${battleName}`);
       }, 25000)
@@ -170,7 +217,7 @@ const ArenaHome = () => {
   };
 
   const handleJoinBattle = (pendingBattle) =>{
-    if(Object.keys(selectedCards).length !== 3){
+    if(Object.keys(confirmedCards).length !== 3){
       setShowAlert({
         status: true,
         type: 'failure',
@@ -178,8 +225,8 @@ const ArenaHome = () => {
       });
       return;
     }
-    localStorage.setItem('cards', JSON.stringify(selectedCards));
-    localStorage.setItem('cardsStats', JSON.stringify(selectedCardsStats));
+    localStorage.setItem('confirmedCards', JSON.stringify(confirmedCards));
+    localStorage.setItem('confirmedCardsStats', JSON.stringify(confirmedCardsStats));
     // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
     setTimeout(() => {
       setLobbyStatus(true);
@@ -241,7 +288,23 @@ const ArenaHome = () => {
 
   const handleButtonClick = (key, link) => {
     // Check if the key exists in the selectedCards dictionary
-    if (selectedCards.hasOwnProperty(key)) {
+    if(confirmedCards.hasOwnProperty(key)){
+      if (selectedCards.hasOwnProperty(key)){
+        const updatedSelectedCards = { ...selectedCards };
+        const updatedSelectedCardsStats = { ...selectedCardsStats};
+        delete updatedSelectedCards[key];
+        delete updatedSelectedCardsStats[key];
+        
+        setSelectedCards(updatedSelectedCards);
+        selectedCardsStats(updatedSelectedCardsStats)
+        // setConfirmedCards({ ...confirmedCards, [key]: link})
+      }
+      else{
+        setSelectedCards({ ...selectedCards, [key]: link }); // Add the key to the dictionary with a truthy value
+        setSelectedCardsStats({ ...selectedCardsStats, [key]: confirmedCardsStats[key]})
+      }
+    }
+    else if (selectedCards.hasOwnProperty(key)) {
         // If selected, remove it from the dictionary
         const updatedSelectedCards = { ...selectedCards }; // Create a copy of the dictionary
         const updatedSelectedCardsStats = { ...selectedCardsStats}
@@ -249,7 +312,8 @@ const ArenaHome = () => {
         delete updatedSelectedCardsStats[key];
         setSelectedCards(updatedSelectedCards); // Update the state with the modified dictionary
         setSelectedCardsStats(updatedSelectedCardsStats);
-    } else {
+    }
+    else{
         // If not selected, add it to the dictionary
         setSelectedCards({ ...selectedCards, [key]: link }); // Add the key to the dictionary with a truthy value
         const temp = availableCardsStats[key];
@@ -263,27 +327,43 @@ const ArenaHome = () => {
       try {
           await contract.transferCardToContract(key); // Assuming `receiverAddress` is defined elsewhere
           console.log(`Transferred card with key ${key} successfully.`);
+          setConfirmedCards({ ...confirmedCards, [key]: selectedCards[key] }); // Add the key to the dictionary with a truthy value
+          localStorage.setItem('confirmedCards', JSON.stringify(confirmedCards));
+          delete availableCards[key];
+          delete selectedCards[key];
+          delete selectedCardsStats[key];
       } catch (error) {
           console.error(`Error transferring card with key ${key}:`, error);
       }
-      // finally{
-      //   setTimeout(async() =>{
-      //     const res = await contract.getOwnerOfTokenByName(key);
-      //     console.log('Token Owner: ',res);
-      //   },20000);
-      // }
+      finally{
+        setTimeout(async() =>{
+          const res = await contract.getOwnerOfTokenByName(key);
+          console.log('Token Owner: ',res);
+        },20000);
+      }
     });
   }
 
   const handleRevoke = () =>{
     Object.keys(selectedCards).forEach(async (key) => {
+      // const key="https://bafybeige2was3qob2esyv4kbtxa5obijpv4vhkhmw2clcypmbhnxzpko5i.ipfs.w3s.link/64.json";
       try {
-          await contract.transferCardToContract(key); // Assuming `receiverAddress` is defined elsewhere
+          await contract.transferCardFromContract(walletAddress, key); // Assuming `receiverAddress` is defined elsewhere
           console.log(`Transferred card with key ${key} successfully.`);
+
+          const updatedConfirmedCards= { ...confirmedCards}
+          delete updatedConfirmedCards[key];
+          setConfirmedCards(updatedConfirmedCards); 
       } catch (error) {
           console.error(`Error transferring card with key ${key}:`, error);
       }
-  });
+      finally{
+        setTimeout(async() =>{
+          const res = await contract.getOwnerOfTokenByName(key);
+          console.log('Token Owner: ',res);
+        },20000);
+      }
+    });
   }
 
   useEffect(() => {
@@ -292,6 +372,9 @@ const ArenaHome = () => {
     console.log('Available Cards:', availableCards);
     console.log('Available Items Stats:',availableCardsStats);
     console.log('Selected Items Stats:', selectedCardsStats);
+    console.log('Confirmed Cards:', confirmedCards);
+    console.log('Confirmed Cards Stats:', confirmedCardsStats);
+
   }, [selectedCards]);
   // useEffect(() => {
   //   const fetchBattles = async () => {
@@ -376,6 +459,17 @@ const ArenaHome = () => {
                 <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${key}`} />
                 <button 
                   className={`${styles.cardBtn} ${selectedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "bg-stone-950 text-white"}`} 
+                  onClick={() => handleButtonClick(key, link)}
+                >
+                  Select
+                </button>
+              </div>
+            ))}
+            {Object.entries(confirmedCards).map(([key, link]) => (
+              <div key={key} className={styles.cardContainer}>
+                <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${key}`} />
+                <button 
+                  className={`${styles.cardBtn} ${selectedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "bg-green-700 text-white"}`} 
                   onClick={() => handleButtonClick(key, link)}
                 >
                   Select

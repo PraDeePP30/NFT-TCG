@@ -5,37 +5,38 @@ import { useGlobalContext } from '../context'
 import Alert from '../components/Alert'
 import cardBack from '../assets/images/cardBack.png'
 
-const contactFlask = async () => {
+const contactFlask = async (method, endpoint, data = null) => {
     try {
-      // Define the URL of your Flask server endpoint
-      const url = 'http://127.0.0.1:5000/toss'; // Replace with your actual Flask server endpoint
+      const baseURL = 'http://127.0.0.1:5000'; 
+      const url = `${baseURL}/${endpoint}`;
   
-      // Make a GET request to the Flask server
-      const response = await fetch(url);
-      console.log('Flask Response: ',response);
-      // Check if the request was successful
-      if (!response.ok) {
-        throw new Error('Network response was not ok.');
+      const requestOptions = {
+        method: method.toUpperCase(), // Convert method to uppercase ('GET' or 'POST')
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: data ? JSON.stringify(data) : undefined, // Convert postData to JSON string if provided
+      };
+  
+      const response = await fetch(url, requestOptions);
+  
+      console.log(`Flask ${method} Response:`, response);
+  
+    if (!response.ok) {
+        throw new Error(`Network response was not ok for ${method} request.`);
       }
-  
-      // Parse the response body as JSON
       const data = await response.json();
-  
-      // Log or process the received data
-      console.log('Data received from Flask server:', data);
-  
-      // Return the received data (if needed)
+      console.log(`Data received from Flask server (${method} request):`, data);
       return data;
+
     } catch (error) {
-      // Handle any errors that occurred during the fetch operation
-      console.error('Error contacting Flask server:', error);
-      throw error; // Optional: rethrow the error to handle it outside this function
+      console.error(`Error contacting Flask server (${method} request):`, error);
+      throw error; 
     }
   };
 
 const BattlePage = () => {
-    const { selectedCards, showAlert, setShowAlert, selectedCardsStats } = useGlobalContext();
-    // console.log('SelectedCards:::',selectedCards);
+    const { confirmedCards, showAlert, setShowAlert, confirmedCardsStats } = useGlobalContext();
     const { battlename } = useParams();
     const [clickedIndex, setClickedIndex] = useState(null);
     const [selectedValue, setSelectedValue] = useState("select stat");
@@ -48,15 +49,30 @@ const BattlePage = () => {
 
     const handleContainerClick = (index, key) => {
       setClickedIndex(index === clickedIndex ? null : index);
-      const temp = selectedCardsStats[key];
+      const temp = confirmedCardsStats[key];
       setClickedCardStat(temp);
       setClickedCard(key);
     };
 
-    const handleCall = () =>{
+    const handleCall = async () =>{
         console.log("Clicked Card",clickedCard);
         console.log("Clicked Stat:", clickedStat);
         console.log("Selected value:", selectedValue);
+
+        try{
+            const data = {
+                clickedCard: clickedCard,
+                clickedStat: clickedStat,
+                selectedValue: selectedValue
+            };
+          
+            const response = await contactFlask('POST', 'game_handler', data);
+        
+            console.log('Response from backend:', response);
+        }
+        catch(error){
+            console.error('Error:', error);
+        }
     }
 
     const handleToss = async () => {
@@ -71,11 +87,11 @@ const BattlePage = () => {
         <div className='flex flex-row h-full w-full'>
             <div className='flex flex-col w-6/12 items-center'>
                 <div className={styles.battlePageContainer}>
-                {Object.entries(selectedCards).map(([key, link], index) => (
+                {Object.entries(confirmedCards).map(([key, link], index) => (
                     <div 
                         key={key} 
                         className={`${styles.battleCardContainer} ${index === clickedIndex ? styles.clicked : ''}`} 
-                        style={{ zIndex: index === clickedIndex ? Object.keys(selectedCards).length + 1 : Object.keys(selectedCards).length - index }}
+                        style={{ zIndex: index === clickedIndex ? Object.keys(confirmedCards).length + 1 : Object.keys(confirmedCards).length - index }}
                         onClick={() => handleContainerClick(index, key)}
                     >
                         <img src={link} className={`${styles.cardImg} mb-2`} alt={`Image ${index + 1}`} />
@@ -126,10 +142,10 @@ const BattlePage = () => {
             
 
             <div className={styles.battlePageContainerFixed}>
-            {Object.entries(selectedCards).map(([key, link]) => (
+            {Object.entries(confirmedCards).map(([key, link]) => (
                 <div key={key} className={`${styles.battleCardContainerFixed} `}>
                     <img src={cardBack} className={`w-full h-full object-contain mb-2`} alt={`Image ${key}`} />
-                    {/* <button className={`${styles.btn} ${ selectedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "text-white"}`} onClick={() => handleButtonClick(key)}>Select</button> */}
+                    {/* <button className={`${styles.btn} ${ confirmedCards.hasOwnProperty(key) ? "bg-blue-700 text-white" : "text-white"}`} onClick={() => handleButtonClick(key)}>Select</button> */}
                 </div>
                 ))}
             </div>
