@@ -7,22 +7,17 @@ import { useGlobalContext } from '../context';
 
 const LobbyModal = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { LobbyStatus, setLobbyStatus } = useGlobalContext();
+  const { LobbyStatus, setLobbyStatus, player2Ref , player1Ref} = useGlobalContext();
   useEffect(() => {
-    console.log('LobbyStatus:::', LobbyStatus);
-    if (LobbyStatus){
+    console.log('LobbyStatus:::', LobbyStatus , "Player 2 ref:", player2Ref.current);
+    if (LobbyStatus && !player2Ref.current){
         setModalIsOpen(true);
-    }
-    else{
-        setModalIsOpen(false);
     }
   }, [LobbyStatus]);
 
   const generateStep = () => {
-    console.log("lobby");
-    if (LobbyStatus) {
+    if (LobbyStatus && !player2Ref.current) {
         
-        // setModalIsOpen(true);
         return (
             <>
                 <p className={styles.modalText}>
@@ -30,13 +25,31 @@ const LobbyModal = () => {
                 </p>
                 <p className={styles.modalText}>
                 Please wait for the other player to join.
-                </p>
-                <CustomButton
-                title="Start Game"
-                handleClick={() => setLobbyStatus(false)}
-                />
+                </p> 
+               
             </>
             );
+    }
+    else{
+      return (
+        <>
+            <p className={styles.modalText}>
+            You are in the Battle lobby!
+            </p>
+            <p className={styles.modalText}>
+              Other player has joined the lobby.
+            </p>
+            
+            <CustomButton
+            title="Start Game"
+            handleClick={() => {
+              setLobbyStatus(false);
+              setModalIsOpen(false);  
+            }
+            }
+            />
+        </>
+        );
     }
   };
 

@@ -78,8 +78,8 @@ AddNewEvent(battleJoinedEvent, provider, ({args}) => {
   const opponent = args.opponent;
   const battleName = args.battleName;
   // if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
-  if (walletAddress.toLowerCase() === args.host.toLowerCase()) {
-    // navigate(`/arena/tiger/${args.battleName}`);
+  if (walletAddress.toLowerCase() !== opponent.toLowerCase()){
+    player2Ref.current = opponent;
   }
   setUpdateGameData((prevUpdateGameData) => prevUpdateGameData + 1);
 });

@@ -40,12 +40,9 @@ const contactFlask = async () => {
 const ArenaHome = () => {
   const { contract, gameData, accountBalance, battleName, availableCards, setAvailableCards, setBattleName, setShowAlert,
           setErrorMessage, selectedCards, setSelectedCards, showAlert, walletAddress, cardMinted, setAvailableCardsStats, availableCardsStats,
-          selectedCardsStats, setSelectedCardsStats,  LobbyStatus, setLobbyStatus, confirmedCards, setConfirmedCards,confirmedCardsStats, setConfirmedCardsStats  } = useGlobalContext();
+          selectedCardsStats, setSelectedCardsStats,  player2Ref, setLobbyStatus, confirmedCards, setConfirmedCards,confirmedCardsStats, setConfirmedCardsStats  } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
-  // const [availableCards, setAvailableCards] = useState([]);
   const [noCards, setNoCards] = useState(true);
-  // const [reload, setReload] = useState(true);
-  // const [cardMinted, setCardMinted] = useState(false);
   const [displayBattlesPage, setDisplayBattlePage] = useState(false);
   const navigate = useNavigate();
   const { mode } = useParams();
@@ -103,12 +100,6 @@ const ArenaHome = () => {
             }
             
             const data = await response.json();
-            // console.log('data:',data);
-            // if(!availableCards.includes(data.image_link)){
-            //   console.log('Card Link: ',data.image_link);
-            //   setAvailableCards([...availableCards, data.image_link]);
-            // }
-            // setAvailableCards([...availableCards, data.image_link]);
             temp[item] = data.image_link;
             tempStats[item] = data;
             console.log('Temp stats:',tempStats);
@@ -121,7 +112,7 @@ const ArenaHome = () => {
         setAvailableCards(temp);
         setAvailableCardsStats(tempStats);
       }, 500);
-      // console.log('Available Cards:',availableCards);
+      console.log('Available Cards:',availableCards);
      }
     }
     catch(error){
@@ -140,7 +131,6 @@ const ArenaHome = () => {
         // console.log(contract);
         if(contract){
         let cards = await contract.getContractCards(walletAddress);
-        console.log('selected cards: ',cards.length);
         const temp = {};
         const tempStats = {};
         cards.forEach(async (item, index) => {
@@ -153,12 +143,6 @@ const ArenaHome = () => {
             }
             
             const data = await response.json();
-            // console.log('data:',data);
-            // if(!availableCards.includes(data.image_link)){
-            //   console.log('Card Link: ',data.image_link);
-            //   setAvailableCards([...availableCards, data.image_link]);
-            // }
-            // setAvailableCards([...availableCards, data.image_link]);
             temp[item] = data.image_link;
             tempStats[item] = data;
             console.log('Temp stats:',tempStats);
@@ -171,7 +155,7 @@ const ArenaHome = () => {
         setConfirmedCards(temp);
         setConfirmedCardsStats(tempStats);
       }, 500);
-      console.log('Selected Cards:',availableCards);
+      console.log('Confirmed Cards:',confirmedCards);
      }
     }
     catch(error){
@@ -184,7 +168,16 @@ const ArenaHome = () => {
     }
   };
 
+  const joinBattle = async (battle) => {
+    try {
+      await contract.joinBattleByName(battle, walletAddress);
+    } catch (error) {
+      setErrorMessage(error);
+    }
+  };
+
   const handleCreateBattle = async () => {
+    player2Ref.current=null;
     if (battleName === '' || battleName.trim() === '') {
       setShowAlert({
         status: true,
@@ -217,6 +210,7 @@ const ArenaHome = () => {
   };
 
   const handleJoinBattle = (pendingBattle) =>{
+    player2Ref.current="player2";
     if(Object.keys(confirmedCards).length !== 3){
       setShowAlert({
         status: true,
@@ -228,10 +222,11 @@ const ArenaHome = () => {
     localStorage.setItem('confirmedCards', JSON.stringify(confirmedCards));
     localStorage.setItem('confirmedCardsStats', JSON.stringify(confirmedCardsStats));
     // setShowAlert({ status: true, type: 'info', message: `${ground.name} is battle ready!` });
+    joinBattle(pendingBattle);
     setTimeout(() => {
       setLobbyStatus(true);
       navigate(`/arena/${mode}/battle/${pendingBattle}`);
-    }, 1000);
+    }, 15000);
       
   }
 
@@ -284,8 +279,6 @@ const ArenaHome = () => {
     // console.log('Card minted');
   };
   
-  // const [selectedItems, setSelectedItems] = useState([]);
-
   const handleButtonClick = (key, link) => {
     // Check if the key exists in the selectedCards dictionary
     if(confirmedCards.hasOwnProperty(key)){
@@ -346,7 +339,6 @@ const ArenaHome = () => {
 
   const handleRevoke = () =>{
     Object.keys(selectedCards).forEach(async (key) => {
-      // const key="https://bafybeige2was3qob2esyv4kbtxa5obijpv4vhkhmw2clcypmbhnxzpko5i.ipfs.w3s.link/64.json";
       try {
           await contract.transferCardFromContract(walletAddress, key); // Assuming `receiverAddress` is defined elsewhere
           console.log(`Transferred card with key ${key} successfully.`);
