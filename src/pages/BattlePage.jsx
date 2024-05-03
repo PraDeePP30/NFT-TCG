@@ -66,7 +66,7 @@ const BattlePage = () => {
           const timeoutId = setTimeout(() => {
             navigate('/arena/tiger');
           }, 10000); 
-          return () => {clearTimeout(timeoutId);clearInterval(intervalIdGetStat)};
+          return () => {clearTimeout(timeoutId);clearInterval(intervalIdGetStat); clearInterval(intervalId)};
         }
       }, [confirmedCards, navigate]);
 
@@ -83,6 +83,14 @@ const BattlePage = () => {
     const handleCall = async () =>{
         if (role == false){
             setClickedStat(receivedStat);
+        }
+        if (clickedCard === "" || clickedStat === ""){
+            setShowAlert({
+                status: true,
+                type: 'success',
+                message: "Stat not chosen",
+                });
+                return;
         }
         console.log("Clicked Card",clickedCard);
         console.log("Clicked Stat:", clickedStat);
@@ -102,6 +110,11 @@ const BattlePage = () => {
                 handleCall();
             }
             else{
+                setShowAlert({
+                    status: true,
+                    type: 'success',
+                    message: response.message,
+                    });
                 intervalIdGetWinner = setInterval(fetchWinner, 5000);
             }
         }
@@ -246,7 +259,7 @@ const BattlePage = () => {
                     toss?
                     <button className='text-center rounded-md px-[20px] py-[8px] border-2 ml-4 bg-slate-950 text-white transition-[0.3s] hover:bg-blue-600 hover:border-blue-800'
                             onClick={handleToss}>Toss</button>
-                            :role === "Waiting for other player."?
+                            :role === null?
                             <p className='text-xl font-bold text-slate-950'>Waiting for other player.</p>
                             :null
                     
